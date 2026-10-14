@@ -48,8 +48,8 @@ export default function SettingsTab({
   // Restaurant Profile state
   const [name, setName] = useState(business.name)
   const [location, setLocation] = useState(business.location || '')
-  const [phone, setPhone] = useState(business.phone || '7488260572')
-  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '06123112128, 9525748843')
+  const [phone, setPhone] = useState(business.phone || '6201699943')
+  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '6201699943')
   const [googleUrl, setGoogleUrl] = useState(business.googleReviewUrl || '')
   const [welcomeText, setWelcomeText] = useState(
     (typeof business.welcomeMessage === 'object' && business.welcomeMessage?.en) ||
@@ -271,7 +271,7 @@ export default function SettingsTab({
                   id="sLoc"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Shershah Road, Gur ki Mandi, Gulzarbagh, Patna"
+                  placeholder="behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013"
                   className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                 />
               </div>
@@ -291,7 +291,7 @@ export default function SettingsTab({
                     id="sPhone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="7488260572"
+                    placeholder="6201699943"
                     className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                   />
                   <p className="text-[10px] text-slate-400">
@@ -307,7 +307,7 @@ export default function SettingsTab({
                     id="sSecPhone"
                     value={secondaryPhone}
                     onChange={(e) => setSecondaryPhone(e.target.value)}
-                    placeholder="06123112128, 9525748843"
+                    placeholder="6201699943"
                     className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                   />
                   <p className="text-[10px] text-slate-400">
@@ -397,8 +397,8 @@ export default function SettingsTab({
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   Aliases supported for login: <strong className="text-slate-300">admin</strong>,{' '}
                   <strong className="text-slate-300">owner</strong>,{' '}
-                  <strong className="text-slate-300">zaika</strong>,{' '}
-                  <strong className="text-slate-300">pmzaika</strong>
+                  <strong className="text-slate-300">residence</strong>,{' '}
+                  <strong className="text-slate-300">residenceinn</strong>
                 </p>
               </div>
             </div>

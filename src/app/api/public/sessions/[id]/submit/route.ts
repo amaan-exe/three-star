@@ -84,6 +84,17 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       )
     }
 
+    const overallRatingVal = answerMap.get('overall_rating')
+    if (typeof overallRatingVal === 'number' && overallRatingVal < 4) {
+      return NextResponse.json(
+        {
+          error: 'Residence Inn feedback requires a minimum rating of 4 or 5 stars',
+          invalid_question: 'overall_rating',
+        },
+        { status: 400 }
+      )
+    }
+
     // 6. Save any provided answers that were not yet in the DB
     if (Object.keys(providedAnswers).length > 0) {
       try {

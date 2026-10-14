@@ -107,6 +107,13 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
     // 4. Upsert answer
     const answerValue = validation.data.value !== undefined ? validation.data.value : validation.data
 
+    if (question_key === 'overall_rating' && typeof answerValue === 'number' && answerValue < 4) {
+      return NextResponse.json(
+        { error: 'Rating of 4 or 5 stars required' },
+        { status: 400 }
+      )
+    }
+
     const { error: answerError } = await supabase.from('answers').upsert(
       {
         session_id: id,

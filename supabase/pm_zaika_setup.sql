@@ -279,24 +279,25 @@ BEGIN
       google_review_url
     ) VALUES (
       v_owner_id,
-      'PM Zaika Restaurant',
+      'Residence Inn',
       'restaurant',
-      'Shershah Road, Gur ki Mandi, Infront of Bank of India, PO - Gulzarbagh , Patna - 800007',
-      '7488260572',
-      '06123112128, 9525748843',
+      'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
+      '6201699943',
+      '6201699943',
       'Asia/Kolkata',
       '#d97706',
-      '{"en": "Welcome to PM Zaika Restaurant! Share your honest dining experience with us in 30 seconds. For helpline & orders call 7488260572."}'::jsonb,
+      '{"en": "Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943."}'::jsonb,
       'https://search.google.com/local/writereview?placeid=ChIJ52esmZNf7TkRoznWIQnz7uo'
     )
     RETURNING id INTO v_business_id;
   ELSE
-    -- Update existing record with official PM Zaika info
+    -- Update existing record with official Residence Inn info
     UPDATE businesses SET
-      location = 'Shershah Road, Gur ki Mandi, Infront of Bank of India, PO - Gulzarbagh , Patna - 800007',
-      phone = '7488260572',
-      secondary_phone = '06123112128, 9525748843',
-      welcome_message = '{"en": "Welcome to PM Zaika Restaurant! Share your honest dining experience with us in 30 seconds. For helpline & orders call 7488260572."}'::jsonb,
+      name = 'Residence Inn',
+      location = 'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
+      phone = '6201699943',
+      secondary_phone = '6201699943',
+      welcome_message = '{"en": "Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943."}'::jsonb,
       google_review_url = 'https://search.google.com/local/writereview?placeid=ChIJ52esmZNf7TkRoznWIQnz7uo',
       updated_at = now()
     WHERE id = v_business_id;
@@ -305,9 +306,13 @@ BEGIN
   -- 2. Seed default questions
   PERFORM seed_default_questions(v_business_id);
 
-  -- 3. Seed primary campaign: pm-zaika
+  -- 3. Seed primary campaign: residence-inn and pm-zaika
   INSERT INTO campaigns (business_id, name, slug, active)
-  VALUES (v_business_id, 'Table Stands - Dine-In QR', 'pm-zaika', true)
+  VALUES (v_business_id, 'Table Stands - Dine-In QR', 'residence-inn', true)
+  ON CONFLICT (slug) DO UPDATE SET active = true, business_id = v_business_id;
+
+  INSERT INTO campaigns (business_id, name, slug, active)
+  VALUES (v_business_id, 'Residence Inn - Table Stand QR', 'pm-zaika', true)
   ON CONFLICT (slug) DO UPDATE SET active = true, business_id = v_business_id;
 
   -- Also seed alias campaign 'patna-dining' so any existing bookmarks work

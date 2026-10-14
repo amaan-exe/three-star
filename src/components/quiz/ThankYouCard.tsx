@@ -14,14 +14,14 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${restaurantName} — Authentic Dining Experience`,
-          text: `Check out ${restaurantName} on Shershah Road, Gur ki Mandi, Gulzarbagh, Patna!`,
+          title: `${restaurantName} — Exceptional Hospitality & Dining`,
+          text: `Check out ${restaurantName} behind P&M Mall and Ion Digital Zone, Patliputra, Patna!`,
           url,
         })
       } catch {}
     } else {
       navigator.clipboard.writeText(url)
-      alert('Restaurant link copied to clipboard!')
+      alert('Hotel & Restaurant link copied to clipboard!')
     }
   }
 
@@ -42,17 +42,17 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-[11px] font-bold text-amber-900 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>Shukriya! धन्यवाद</span>
+            <span>Thank You! धन्यवाद</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight leading-tight">
-            Thank you for dining with us!
+            Thank you for visiting us!
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-xs mx-auto">
-            Your honest thoughts help the chef and team at{' '}
-            <strong className="text-stone-800 font-semibold">{restaurantName || 'PM Zaika Restaurant'}</strong> maintain
-            the highest culinary standard.
+            Your honest thoughts help the leadership and team at{' '}
+            <strong className="text-stone-800 font-semibold">{restaurantName || 'Residence Inn'}</strong> maintain
+            the highest hospitality standard.
           </p>
         </div>
 
@@ -64,11 +64,11 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
               <span>Feedback Recorded Successfully</span>
             </div>
             <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full border border-amber-300/40">
-              Verified Diner
+              Verified Guest
             </span>
           </div>
           <p className="text-xs text-stone-600 leading-relaxed">
-            Our management team and kitchen staff review every response to continually perfect our recipes, zaika delicacies, and hospitality. We look forward to hosting you again soon!
+            Our management team and culinary staff review every response to continually perfect our dishes, guest suites, and royal hospitality. We look forward to hosting you again soon!
           </p>
         </div>
 
@@ -76,11 +76,11 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
         <div className="space-y-2.5 pt-1">
           {/* Primary: Direct Call to Restaurant */}
           <a
-            href="tel:7488260572"
+            href="tel:6201699943"
             className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-bold shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 text-sm transition-all duration-200 cursor-pointer active:scale-95"
           >
             <Phone className="w-4 h-4" />
-            <span>Call Restaurant: +91 74882 60572</span>
+            <span>Call Helpline: +91 62016 99943</span>
           </a>
 
           {/* Secondary Buttons Row */}

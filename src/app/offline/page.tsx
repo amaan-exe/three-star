@@ -81,18 +81,18 @@ export default function OfflinePage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
                 <Sparkles className="w-3.5 h-3.5" />
-                PM Zaika Restaurant, Patna
+                Residence Inn, Patna
               </div>
               <a
-                href="tel:7488260572"
+                href="tel:6201699943"
                 className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"
               >
                 <Phone className="w-3 h-3 text-amber-400" />
-                <span>Call: 7488260572</span>
+                <span>Call: 6201699943</span>
               </a>
             </div>
             <p className="text-[11px] text-slate-400 leading-tight">
-              Shershah Road, Gur ki Mandi, Infront of Bank of India, Gulzarbagh, Patna - 800007
+              behind P&amp;M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013
             </p>
           </div>
 

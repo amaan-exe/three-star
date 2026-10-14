@@ -109,8 +109,8 @@ export default function PrivateFeedbackModal({
                   <Phone className="w-3.5 h-3.5 text-amber-700" />
                   Urgent? Call manager directly:
                 </span>
-                <a href="tel:7488260572" className="font-bold underline hover:text-amber-700">
-                  +91 7488260572
+                <a href="tel:6201699943" className="font-bold underline hover:text-amber-700">
+                  +91 62016 99943
                 </a>
               </div>
             </div>

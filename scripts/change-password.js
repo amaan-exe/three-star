@@ -20,6 +20,11 @@ const PRIMARY_EMAIL = 'invincibleperson9@gmail.com'
 const ALIASES = new Set([
   'admin',
   'owner',
+  'residence',
+  'residenceinn',
+  'residence-inn',
+  'admin@residenceinn.com',
+  'owner@residenceinn.com',
   'zaika',
   'pmzaika',
   'pm-zaika',

@@ -58,7 +58,7 @@ export default function MobileMenuDrawer({
   }
 
   const handleShareSurvey = async () => {
-    const surveyUrl = `${window.location.origin}/r/pm-zaika`
+    const surveyUrl = `${window.location.origin}/r/residence-inn`
     if (navigator.share) {
       try {
         await navigator.share({
@@ -233,7 +233,7 @@ export default function MobileMenuDrawer({
 
           <div className="grid grid-cols-2 gap-2">
             <Link
-              href="/r/pm-zaika"
+              href="/r/residence-inn"
               target="_blank"
               onClick={onClose}
               className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 flex flex-col items-center justify-center text-center gap-1.5 hover:bg-slate-800/60 transition-colors"

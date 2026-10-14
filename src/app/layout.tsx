@@ -12,12 +12,12 @@ export const metadata: Metadata = {
     default: 'ReviewPulse — Restaurant Feedback & Authentic Reviews',
     template: '%s | ReviewPulse',
   },
-  description: 'QR-based customer feedback platform for PM Zaika Restaurant with AI-assisted review drafting',
-  applicationName: 'PM Zaika Feedback',
+  description: 'QR-based customer feedback platform for Residence Inn with AI-assisted review drafting',
+  applicationName: 'Residence Inn Feedback',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'PM Zaika',
+    title: 'Residence Inn',
   },
   formatDetection: {
     telephone: false,

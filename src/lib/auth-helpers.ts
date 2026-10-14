@@ -7,6 +7,11 @@ export const PM_ZAIKA_PRIMARY_EMAIL = 'invincibleperson9@gmail.com'
 const ZAIKA_ALIASES = new Set([
   'admin',
   'owner',
+  'residence',
+  'residenceinn',
+  'residence-inn',
+  'admin@residenceinn.com',
+  'owner@residenceinn.com',
   'zaika',
   'pmzaika',
   'pm-zaika',

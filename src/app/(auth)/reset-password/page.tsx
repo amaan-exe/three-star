@@ -198,7 +198,7 @@ function ResetPasswordForm() {
             <Utensils className="w-4 h-4" />
           </div>
           <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-            PM Zaika Admin Security
+            Residence Inn Admin Security
           </span>
         </div>
         <CardTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -409,7 +409,7 @@ function ResetPasswordForm() {
         >
           &larr; Back to Login
         </Link>
-        <span className="text-slate-600 text-[10px]">PM Zaika Restaurant</span>
+        <span className="text-slate-600 text-[10px]">Residence Inn</span>
       </CardFooter>
     </Card>
   )

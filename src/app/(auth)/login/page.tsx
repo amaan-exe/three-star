@@ -78,7 +78,7 @@ export default function LoginPage() {
               <Utensils className="w-4 h-4" />
             </div>
             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              PM Zaika Restaurant Admin
+              Residence Inn Admin
             </span>
           </div>
           <CardTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -113,7 +113,7 @@ export default function LoginPage() {
               <Input
                 id="username"
                 type="text"
-                placeholder="admin or owner@pmzaika.com"
+                placeholder="admin or owner@residenceinn.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -199,7 +199,7 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-500/70" />
-              <span>PM Zaika Restaurant Admin Portal • Owner Access</span>
+              <span>Residence Inn Admin Portal • Owner Access</span>
             </div>
           </CardFooter>
         </form>
