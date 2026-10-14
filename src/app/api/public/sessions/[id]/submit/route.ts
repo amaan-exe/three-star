@@ -88,12 +88,17 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     const now = new Date().toISOString()
     const db = getFirestoreDb()
 
+    const customerName = (providedAnswers.customer_name || answerMap.get('customer_name') || answerMap.get('customer_contact')?.name || '') as string
+    const customerPhone = (providedAnswers.customer_phone || answerMap.get('customer_phone') || answerMap.get('customer_contact')?.phone || '') as string
+
     // 6. Mark session as completed in Firestore
     await db.collection('sessions').doc(id).set(
       {
         status: 'completed',
         completed_at: now,
         last_activity_at: now,
+        ...(customerName ? { customer_name: customerName } : {}),
+        ...(customerPhone ? { customer_phone: customerPhone } : {}),
       },
       { merge: true }
     )

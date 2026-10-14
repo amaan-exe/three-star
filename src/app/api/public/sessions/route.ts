@@ -6,7 +6,8 @@ import { slugSchema } from '@/lib/validation/schemas'
 import { z } from 'zod'
 
 const createSessionSchema = z.object({
-  slug: slugSchema,
+  slug: slugSchema.optional(),
+  campaign_id: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -16,15 +17,15 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid campaign slug', details: parsed.error.flatten() },
+        { error: 'Invalid campaign identifier', details: parsed.error.flatten() },
         { status: 400 }
       )
     }
 
-    const { slug } = parsed.data
+    const targetSlug = parsed.data.slug || parsed.data.campaign_id || 'residence-inn'
 
     // 1. Look up campaign & business from Firestore
-    const { campaign, business } = await getCampaignBySlug(slug)
+    const { campaign, business } = await getCampaignBySlug(targetSlug)
 
     if (!campaign || !business) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       business_id: campaign.business_id,
       campaign_id: campaign.id,
       event_type: 'QR_SCANNED',
-      metadata: { slug },
+      metadata: { slug: targetSlug },
     })
 
     await recordEvent({
