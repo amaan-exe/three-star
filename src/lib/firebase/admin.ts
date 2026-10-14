@@ -1,12 +1,10 @@
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app'
 import { getFirestore, type Firestore } from 'firebase-admin/firestore'
-import { getAuth, type Auth } from 'firebase-admin/auth'
 import fs from 'fs'
 import path from 'path'
 
 let app: App | null = null
 let db: Firestore | null = null
-let auth: Auth | null = null
 
 // Embedded production service account fallback for Vercel deployment
 const DEFAULT_SERVICE_ACCOUNT = {
@@ -81,11 +79,4 @@ export function getFirestoreDb(): Firestore {
     }
   }
   return db
-}
-
-export function getFirebaseAuth(): Auth {
-  if (!auth) {
-    auth = getAuth(getFirebaseApp())
-  }
-  return auth
 }
