@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { Copy, Check, ExternalLink, MessageSquareHeart, Sparkles, Loader2, ArrowRight, RotateCcw } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Copy, Check, ExternalLink, MessageSquareHeart, Sparkles, Loader2, ArrowRight, RotateCcw, Lock, Quote } from 'lucide-react'
 import { trackClientEvent } from '@/lib/client/telemetry'
 
 interface ReviewDraftCardProps {
@@ -28,7 +28,6 @@ export default function ReviewDraftCard({
   const [hasCopied, setHasCopied] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch draft from API if not pre-populated
   useEffect(() => {
@@ -52,22 +51,7 @@ export default function ReviewDraftCard({
         })
         .finally(() => setIsLoadingDraft(false))
     }
-  }, [sessionId, draft])
-
-  // Save changes with 1s debounce
-  const handleDraftChange = (newText: string) => {
-    setDraft(newText)
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
-
-    saveTimeoutRef.current = setTimeout(() => {
-      fetch(`/api/public/sessions/${sessionId}/draft`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ final_text: newText }),
-      }).catch((e) => console.warn('Draft auto-save error:', e))
-    }, 1000)
-  }
+  }, [sessionId, draft, restaurantName])
 
   // Copy text helper
   const copyToClipboard = async () => {
@@ -75,7 +59,7 @@ export default function ReviewDraftCard({
       await navigator.clipboard.writeText(draft)
       setIsCopied(true)
       setHasCopied(true)
-      setToastMessage('Review copied! You can now post on Google.')
+      setToastMessage('Review copied! Tap below to post on Google.')
       setTimeout(() => {
         setIsCopied(false)
         setToastMessage(null)
@@ -86,16 +70,8 @@ export default function ReviewDraftCard({
     }
   }
 
-  // Primary Action: Share on Google (only accessible after copying)
+  // Primary Action: Share on Google (copies text automatically & opens Google Review link)
   const handleShareOnGoogle = async () => {
-    try {
-      await fetch(`/api/public/sessions/${sessionId}/draft`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ final_text: draft }),
-      })
-    } catch {}
-
     try {
       await navigator.clipboard.writeText(draft)
     } catch {}
@@ -112,58 +88,65 @@ export default function ReviewDraftCard({
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0
 
   return (
-    <div className="relative z-10 w-full max-w-md mx-auto py-6 px-4 sm:px-0 space-y-5 animate-in fade-in zoom-in-95 duration-300">
+    <div className="relative z-10 w-full max-w-md mx-auto py-4 sm:py-6 px-3 sm:px-0 space-y-5 animate-in fade-in zoom-in-95 duration-300">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-stone-900 border border-stone-800 text-white text-xs font-semibold shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-stone-900 border border-stone-800 text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
           <Check className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Card Header & Disclaimer */}
+      {/* Card Header */}
       <div className="text-center space-y-1.5">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-semibold shadow-xs">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-          <span>AI Assisted Review Draft</span>
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-semibold shadow-2xs">
+          <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+          <span>AI Assisted Review</span>
         </div>
         <h1 className="text-2xl font-bold text-stone-900 tracking-tight sm:text-3xl">
-          Your Dining Review
+          Your Review for Google
         </h1>
         <p className="text-xs text-stone-600 max-w-sm mx-auto leading-relaxed">
-          Crafted based on your ratings &amp; selected dishes. Feel free to tweak it before sharing.
+          Generated based on your rating. Copy it below and post directly to Google Reviews.
         </p>
       </div>
 
-      {/* Editable Draft Text Area Card */}
-      <div className="p-6 rounded-3xl bg-white border border-stone-200 shadow-[0_20px_50px_-10px_rgba(180,83,9,0.08),0_4px_16px_rgba(0,0,0,0.03)] space-y-4">
+      {/* Uneditable Review Card */}
+      <div className="p-5 sm:p-7 rounded-3xl bg-white border border-stone-200 shadow-[0_20px_50px_-10px_rgba(180,83,9,0.08),0_4px_16px_rgba(0,0,0,0.03)] space-y-4">
         {isLoadingDraft ? (
           <div className="py-12 text-center text-stone-500 space-y-3">
-            <Loader2 className="w-7 h-7 mx-auto animate-spin text-amber-600" />
+            <Loader2 className="w-8 h-8 mx-auto animate-spin text-amber-600" />
             <p className="text-xs font-medium">Preparing your custom review draft...</p>
           </div>
         ) : (
-          <>
-            <div className="space-y-1.5">
-              <label htmlFor="review-draft-text" className="text-xs font-semibold text-stone-700 flex items-center justify-between">
-                <span>Review Draft</span>
-                <span className="text-[11px] text-amber-800 font-medium">Tap text to edit freely</span>
-              </label>
-              <textarea
-                id="review-draft-text"
-                value={draft}
-                onChange={(e) => handleDraftChange(e.target.value)}
-                placeholder="Write or edit your review..."
-                rows={4}
-                aria-label="Edit review draft"
-                className="w-full bg-stone-50 border border-stone-200 rounded-2xl p-4 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20 resize-none transition-all leading-relaxed shadow-xs"
-              />
-              <div className="flex items-center justify-between text-[11px] text-stone-400 px-1">
-                <span>{wordCount} words</span>
-                <span>Optional public review</span>
-              </div>
+          <div className="space-y-2.5">
+            {/* Top metadata pill */}
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-900 bg-amber-50 border border-amber-200/90 px-2.5 py-0.5 rounded-full shadow-2xs">
+                <Lock className="w-3 h-3 text-amber-700" />
+                <span>Generated Review (Uneditable)</span>
+              </span>
+              <span className="text-[11px] text-stone-400 font-medium">
+                {wordCount} words
+              </span>
             </div>
-          </>
+
+            {/* Uneditable review text block */}
+            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50/40 via-stone-50/70 to-amber-50/20 border border-amber-200/80 shadow-inner group">
+              <Quote className="w-6 h-6 text-amber-300 absolute top-3 left-3 opacity-60 pointer-events-none" />
+              <p
+                id="review-draft-text"
+                aria-label="Generated review draft"
+                className="text-stone-800 text-sm sm:text-base leading-relaxed font-serif italic select-all pt-3 px-1 text-left"
+              >
+                &ldquo;{draft}&rdquo;
+              </p>
+            </div>
+
+            <p className="text-[11px] text-stone-400 text-center">
+              🔒 This review is uneditable to preserve authentic ratings
+            </p>
+          </div>
         )}
 
         {/* 2-Step Copy & Redirect Action Flow */}
@@ -246,10 +229,10 @@ export default function ReviewDraftCard({
               {/* Helper notice */}
               <p className="text-[11px] text-emerald-700 text-center flex items-center justify-center gap-1.5 py-0.5 font-medium">
                 <Check className="w-3.5 h-3.5 shrink-0" />
-                <span>Text copied! Simply paste (tap &amp; hold or Ctrl+V) on Google Reviews.</span>
+                <span>Text copied! Simply paste on Google Reviews.</span>
               </p>
 
-              {/* Secondary button to re-copy if edited */}
+              {/* Secondary button to re-copy */}
               <button
                 type="button"
                 onClick={copyToClipboard}
@@ -271,7 +254,7 @@ export default function ReviewDraftCard({
           className="inline-flex items-center gap-1.5 text-xs text-amber-800 hover:text-amber-900 font-semibold hover:underline underline-offset-4 cursor-pointer transition-all"
         >
           <MessageSquareHeart className="w-3.5 h-3.5 text-amber-600" />
-          <span>Send private feedback directly to the restaurant manager</span>
+          <span>Send private feedback directly to the hotel manager</span>
         </button>
 
         <div>

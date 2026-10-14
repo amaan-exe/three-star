@@ -42,8 +42,8 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       }
     }
 
-    // 4. Validate required core questions: overall_rating, food_rating, service_rating
-    const requiredKeys = ['overall_rating', 'food_rating', 'service_rating']
+    // 4. Validate required rating: overall_rating (stars)
+    const requiredKeys = ['overall_rating']
     const missing: string[] = []
 
     for (const key of requiredKeys) {
@@ -58,24 +58,22 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       console.warn(`[Submit] Missing required questions for session ${id}:`, missing)
       return NextResponse.json(
         {
-          error: 'Required ratings missing or invalid',
+          error: 'Required rating missing or invalid',
           missing_questions: missing,
         },
         { status: 400 }
       )
     }
 
-    for (const key of ['overall_rating', 'food_rating', 'service_rating']) {
-      const val = answerMap.get(key)
-      if (typeof val === 'number' && val < 4) {
-        return NextResponse.json(
-          {
-            error: 'Residence Inn feedback requires a minimum rating of 4 or 5 stars',
-            invalid_question: key,
-          },
-          { status: 400 }
-        )
-      }
+    const overallVal = answerMap.get('overall_rating')
+    if (typeof overallVal === 'number' && overallVal < 4) {
+      return NextResponse.json(
+        {
+          error: 'Ratings below 4 stars cannot be submitted',
+          invalid_question: 'overall_rating',
+        },
+        { status: 400 }
+      )
     }
 
     // 5. Save any provided answers to Firestore

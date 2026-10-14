@@ -85,8 +85,8 @@ export function generateDeterministicDraft(factSheet: FactSheet, sessionId: stri
     sentences.push(OVERALL_NEGATIVE[getSeededIndex(sessionId + '-ov', OVERALL_NEGATIVE.length)])
   }
 
-  // 2. Room & Cleanliness Sentence (mapped to food question key)
-  const foodTone = factSheet.food?.tone || 'positive'
+  // 2. Room & Cleanliness Sentence (mapped to hotel comfort)
+  const foodTone = factSheet.food?.tone || overallTone
   if (foodTone === 'positive') {
     sentences.push(FOOD_POSITIVE[getSeededIndex(sessionId + '-fd', FOOD_POSITIVE.length)])
   } else if (foodTone === 'neutral') {
@@ -105,7 +105,7 @@ export function generateDeterministicDraft(factSheet: FactSheet, sessionId: stri
   }
 
   // 4. Hospitality & Staff Service Sentence
-  const serviceTone = factSheet.service?.tone || 'positive'
+  const serviceTone = factSheet.service?.tone || overallTone
   if (serviceTone === 'positive') {
     sentences.push(SERVICE_POSITIVE[getSeededIndex(sessionId + '-sv', SERVICE_POSITIVE.length)])
   } else if (serviceTone === 'neutral') {

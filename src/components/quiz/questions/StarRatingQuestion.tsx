@@ -11,15 +11,12 @@ interface StarRatingQuestionProps {
 }
 
 const RATING_LABELS: Record<number, string> = {
-  1: 'Disappointing stay',
-  2: 'Could have been better',
-  3: 'Decent stay',
-  4: 'Very comfortable & relaxing!',
-  5: 'Outstanding hotel experience!',
+  4: '4 Stars — Very comfortable & relaxing!',
+  5: '5 Stars — Outstanding hotel experience!',
 }
 
 export default function StarRatingQuestion({
-  value,
+  value = 5,
   onChange,
   restaurantName = 'Residence Inn',
 }: StarRatingQuestionProps) {
@@ -27,15 +24,20 @@ export default function StarRatingQuestion({
   const [showLowRatingModal, setShowLowRatingModal] = useState(false)
   const [attemptedRating, setAttemptedRating] = useState<number>(3)
   const [warningMessage, setWarningMessage] = useState<string | null>(null)
+  const [isShaking, setIsShaking] = useState(false)
 
-  const activeRating = hovered ?? value ?? 0
+  // Ensure value is strictly 4 or 5
+  const safeValue = typeof value === 'number' && value >= 4 ? value : 5
+  const activeRating = hovered && hovered >= 4 ? hovered : safeValue
 
   const handleStarClick = (star: number) => {
     if (star <= 3) {
       setAttemptedRating(star)
       setShowLowRatingModal(true)
+      setIsShaking(true)
+      setTimeout(() => setIsShaking(false), 500)
       setWarningMessage(
-        `At ${restaurantName}, ratings of 3 stars or lower cannot be accepted. Please choose 4 or 5 stars to continue.`
+        `Ratings of 3 stars or lower cannot be chosen. Please select 4 or 5 stars to continue.`
       )
       return
     }
@@ -49,11 +51,11 @@ export default function StarRatingQuestion({
   const handleKeyDown = (e: React.KeyboardEvent, star: number) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
-      const next = Math.min(5, (value ?? star) + 1)
+      const next = Math.min(5, Math.max(4, (safeValue ?? star) + 1))
       handleStarClick(next)
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault()
-      const prev = Math.max(1, (value ?? star) - 1)
+      const prev = Math.max(4, (safeValue ?? star) - 1)
       handleStarClick(prev)
     } else if (e.key === 'Home') {
       e.preventDefault()
@@ -67,7 +69,7 @@ export default function StarRatingQuestion({
   const handleModalSelect = (chosenRating: number) => {
     setShowLowRatingModal(false)
     setWarningMessage(null)
-    onChange(chosenRating)
+    onChange(chosenRating >= 4 ? chosenRating : 5)
   }
 
   return (
@@ -76,32 +78,35 @@ export default function StarRatingQuestion({
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 shadow-xs">
           <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
           <span className="text-[11px] font-semibold tracking-wider uppercase text-amber-900">
-            Question 1 of 6
+            Quick Rating
           </span>
           <span className="text-stone-300">•</span>
-          <span className="text-[11px] text-amber-800 font-medium">Required</span>
+          <span className="text-[11px] text-amber-800 font-medium">4 or 5 Stars</span>
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-          How was your{' '}
+          How many stars for{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            overall stay
-          </span>{' '}
-          at Residence Inn?
+            {restaurantName}
+          </span>
+          ?
         </h2>
         <p className="text-sm text-stone-600">
-          Tap a star to rate your hotel experience (4 or 5 stars required)
+          Tap 4 or 5 stars to generate your review for Google
         </p>
       </div>
 
       {/* Interactive Stars */}
       <div
         role="radiogroup"
-        aria-label="Overall experience rating"
-        className="py-4 sm:py-6 flex items-center justify-center gap-1.5 sm:gap-3.5"
+        aria-label="Star rating"
+        className={`py-4 sm:py-6 flex items-center justify-center gap-1.5 sm:gap-3.5 transition-transform duration-150 ${
+          isShaking ? 'animate-bounce' : ''
+        }`}
       >
         {[1, 2, 3, 4, 5].map((star) => {
           const isFilled = star <= activeRating
-          const isSelected = star === value
+          const isSelected = star === safeValue
+          const isLowRating = star <= 3
 
           return (
             <button
@@ -109,18 +114,22 @@ export default function StarRatingQuestion({
               type="button"
               role="radio"
               aria-checked={isSelected}
-              tabIndex={isSelected || (!value && star === 4) ? 0 : -1}
+              tabIndex={isSelected ? 0 : -1}
               onClick={() => handleStarClick(star)}
               onKeyDown={(e) => handleKeyDown(e, star)}
               onMouseEnter={() => setHovered(star)}
               onMouseLeave={() => setHovered(null)}
-              aria-label={`Rate ${star} star${star > 1 ? 's' : ''}: ${RATING_LABELS[star]}`}
-              className={`relative min-w-[44px] min-h-[44px] sm:min-w-[54px] sm:min-h-[54px] p-2 sm:p-3 rounded-2xl transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 active:scale-95 flex items-center justify-center shrink-0 ${
+              aria-label={
+                isLowRating
+                  ? `${star} star${star > 1 ? 's' : ''} (ratings below 4 stars not accepted)`
+                  : `Rate ${star} stars: ${RATING_LABELS[star]}`
+              }
+              className={`relative min-w-[48px] min-h-[48px] sm:min-w-[56px] sm:min-h-[56px] p-2.5 sm:p-3 rounded-2xl transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 active:scale-95 flex items-center justify-center shrink-0 ${
                 isSelected
-                  ? 'bg-amber-50 scale-105 sm:scale-110 shadow-lg shadow-amber-500/20 border-2 border-amber-400'
-                  : star <= 3
-                  ? 'hover:bg-amber-50/50 hover:scale-105 border border-transparent'
-                  : 'hover:bg-amber-50 hover:scale-110 border border-amber-200/60 shadow-xs'
+                  ? 'bg-amber-50 scale-110 sm:scale-115 shadow-lg shadow-amber-500/25 border-2 border-amber-400 ring-2 ring-amber-300/40'
+                  : isLowRating
+                  ? 'opacity-70 hover:opacity-100 hover:bg-rose-50/40 border border-transparent'
+                  : 'hover:bg-amber-50/80 hover:scale-105 border border-amber-200/50 shadow-2xs'
               }`}
             >
               <Star
@@ -135,28 +144,29 @@ export default function StarRatingQuestion({
         })}
       </div>
 
-      {/* Verbal Feedback Label or Warning */}
+      {/* Verbal Feedback Label or Warning Notice */}
       <div className="min-h-7" aria-live="polite">
-        {value && value >= 4 ? (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold animate-in fade-in duration-200">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>{RATING_LABELS[value]} — Thank you!</span>
-          </div>
-        ) : warningMessage ? (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-300 text-xs font-semibold animate-in shake duration-300 max-w-sm">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+        {warningMessage ? (
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-50 text-rose-900 border border-rose-300 text-xs font-semibold animate-in shake duration-300 max-w-sm shadow-2xs">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{warningMessage}</span>
+          </div>
+        ) : safeValue && RATING_LABELS[safeValue] ? (
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-300 text-xs font-bold animate-in fade-in duration-200 shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
+            <span>{RATING_LABELS[safeValue]}</span>
           </div>
         ) : (
           <p className="text-xs text-stone-500">Please select 4 or 5 stars</p>
         )}
       </div>
 
-      {/* Modal triggered when 1, 2, or 3 stars clicked */}
+      {/* Low Rating Prompt Modal */}
       <LowRatingPromptModal
         isOpen={showLowRatingModal}
         attemptedRating={attemptedRating}
         restaurantName={restaurantName}
+        category="overall"
         onSelectRating={handleModalSelect}
         onClose={() => setShowLowRatingModal(false)}
       />
