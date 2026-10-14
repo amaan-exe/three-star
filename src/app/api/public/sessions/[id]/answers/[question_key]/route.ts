@@ -72,8 +72,12 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
     // 3. Extract value
     const answerValue = validation.data.value !== undefined ? validation.data.value : validation.data
 
-    // Mandatory rule: Rating must be 4 or 5 stars
-    if (question_key === 'overall_rating' && typeof answerValue === 'number' && answerValue < 4) {
+    // Mandatory rule: Rating must be 4 or 5 stars for all core rating questions
+    if (
+      ['overall_rating', 'food_rating', 'service_rating'].includes(question_key) &&
+      typeof answerValue === 'number' &&
+      answerValue < 4
+    ) {
       return NextResponse.json(
         { error: 'Rating of 4 or 5 stars required' },
         { status: 400 }

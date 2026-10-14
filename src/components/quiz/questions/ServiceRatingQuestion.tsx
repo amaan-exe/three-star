@@ -1,10 +1,13 @@
 'use client'
 
-import { Frown, Meh, Smile, Heart, Crown, Check, Sparkles } from 'lucide-react'
+import { useState } from 'react'
+import { Frown, Meh, Smile, Heart, Crown, Check, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react'
+import LowRatingPromptModal from '../LowRatingPromptModal'
 
 interface ServiceRatingQuestionProps {
   value: number | null
   onChange: (value: number) => void
+  restaurantName?: string
 }
 
 const SERVICE_OPTIONS = [
@@ -75,23 +78,52 @@ const SERVICE_OPTIONS = [
   },
 ]
 
-export default function ServiceRatingQuestion({ value, onChange }: ServiceRatingQuestionProps) {
+export default function ServiceRatingQuestion({
+  value,
+  onChange,
+  restaurantName = 'Residence Inn',
+}: ServiceRatingQuestionProps) {
+  const [showLowRatingModal, setShowLowRatingModal] = useState(false)
+  const [attemptedRating, setAttemptedRating] = useState<number>(3)
+  const [warningMessage, setWarningMessage] = useState<string | null>(null)
+
+  const handleSelect = (rating: number) => {
+    if (rating <= 3) {
+      setAttemptedRating(rating)
+      setShowLowRatingModal(true)
+      setWarningMessage(
+        `At ${restaurantName}, ratings below 4 stars cannot be accepted. Please choose Very Good (4) or Royal & Excellent (5) to continue.`
+      )
+      return
+    }
+
+    setWarningMessage(null)
+    setShowLowRatingModal(false)
+    onChange(rating)
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent, rating: number) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
       const next = Math.min(5, (value ?? rating) + 1)
-      onChange(next)
+      handleSelect(next)
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault()
       const prev = Math.max(1, (value ?? rating) - 1)
-      onChange(prev)
+      handleSelect(prev)
     } else if (e.key === 'Home') {
       e.preventDefault()
-      onChange(1)
+      handleSelect(4)
     } else if (e.key === 'End') {
       e.preventDefault()
-      onChange(5)
+      handleSelect(5)
     }
+  }
+
+  const handleModalSelect = (chosenRating: number) => {
+    setShowLowRatingModal(false)
+    setWarningMessage(null)
+    onChange(chosenRating)
   }
 
   return (
@@ -113,7 +145,7 @@ export default function ServiceRatingQuestion({ value, onChange }: ServiceRating
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Staff friendliness, attentiveness, and order speed
+          Staff friendliness, attentiveness, and order speed (4 or 5 stars required)
         </p>
       </div>
 
@@ -126,6 +158,7 @@ export default function ServiceRatingQuestion({ value, onChange }: ServiceRating
         {SERVICE_OPTIONS.map((opt) => {
           const Icon = opt.icon
           const isSelected = value === opt.rating
+          const isBelowThreshold = opt.rating <= 3
 
           return (
             <button
@@ -133,14 +166,16 @@ export default function ServiceRatingQuestion({ value, onChange }: ServiceRating
               type="button"
               role="radio"
               aria-checked={isSelected}
-              tabIndex={isSelected || (!value && opt.rating === 1) ? 0 : -1}
-              onClick={() => onChange(opt.rating)}
+              tabIndex={isSelected || (!value && opt.rating === 4) ? 0 : -1}
+              onClick={() => handleSelect(opt.rating)}
               onKeyDown={(e) => handleKeyDown(e, opt.rating)}
               aria-label={`${opt.label}: ${opt.desc}`}
               className={`group w-full p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 flex items-center justify-between shadow-xs ${
                 isSelected
                   ? `${opt.activeBorder} ${opt.activeBg} shadow-md`
-                  : 'border-stone-200 bg-stone-50/60 hover:bg-white hover:border-amber-300'
+                  : isBelowThreshold
+                  ? 'border-stone-200 bg-stone-50/40 hover:bg-amber-50/30 hover:border-amber-200 opacity-80 hover:opacity-100'
+                  : 'border-amber-200/80 bg-white hover:bg-amber-50/60 hover:border-amber-400'
               }`}
             >
               <div className="flex items-center gap-3.5">
@@ -173,6 +208,33 @@ export default function ServiceRatingQuestion({ value, onChange }: ServiceRating
           )
         })}
       </div>
+
+      {/* Verbal Feedback Label or Warning */}
+      <div className="min-h-7" aria-live="polite">
+        {value && value >= 4 ? (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold animate-in fade-in duration-200">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{SERVICE_OPTIONS.find((o) => o.rating === value)?.label} — Thank you!</span>
+          </div>
+        ) : warningMessage ? (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-300 text-xs font-semibold animate-in shake duration-300 max-w-sm">
+            <AlertCircle className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+            <span>{warningMessage}</span>
+          </div>
+        ) : (
+          <p className="text-xs text-stone-500">Please select Very Good (4) or Royal &amp; Excellent (5)</p>
+        )}
+      </div>
+
+      {/* Modal triggered when 1, 2, or 3 clicked */}
+      <LowRatingPromptModal
+        isOpen={showLowRatingModal}
+        attemptedRating={attemptedRating}
+        restaurantName={restaurantName}
+        category="service"
+        onSelectRating={handleModalSelect}
+        onClose={() => setShowLowRatingModal(false)}
+      />
     </div>
   )
 }

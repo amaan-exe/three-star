@@ -171,8 +171,12 @@ export default function QuizFlow({
 
   // Set an answer for a question with auto-save
   const handleSetAnswer = (key: QuestionKey, value: any, autoAdvance = false) => {
-    // If overall rating is <= 3, do not accept as valid rating
-    if (key === 'overall_rating' && typeof value === 'number' && value < 4) {
+    // If any core rating question is <= 3, do not accept as valid rating
+    if (
+      (key === 'overall_rating' || key === 'food_rating' || key === 'service_rating') &&
+      typeof value === 'number' &&
+      value < 4
+    ) {
       return
     }
 
@@ -485,8 +489,8 @@ export default function QuizFlow({
 
   let canAdvance = true
   if (currentKey === 'overall_rating') canAdvance = Boolean(answers.overall_rating && answers.overall_rating >= 4)
-  if (currentKey === 'food_rating') canAdvance = Boolean(answers.food_rating)
-  if (currentKey === 'service_rating') canAdvance = Boolean(answers.service_rating)
+  if (currentKey === 'food_rating') canAdvance = Boolean(answers.food_rating && answers.food_rating >= 4)
+  if (currentKey === 'service_rating') canAdvance = Boolean(answers.service_rating && answers.service_rating >= 4)
 
   return (
     <>
@@ -519,6 +523,7 @@ export default function QuizFlow({
               {currentKey === 'food_rating' && (
                 <EmojiRatingQuestion
                   value={answers.food_rating}
+                  restaurantName={restaurantName}
                   onChange={(val) => handleSetAnswer('food_rating', val, true)}
                 />
               )}
@@ -526,6 +531,7 @@ export default function QuizFlow({
               {currentKey === 'service_rating' && (
                 <ServiceRatingQuestion
                   value={answers.service_rating}
+                  restaurantName={restaurantName}
                   onChange={(val) => handleSetAnswer('service_rating', val, true)}
                 />
               )}

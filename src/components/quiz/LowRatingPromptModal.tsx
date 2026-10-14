@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Star, Sparkles, HeartHandshake, ShieldAlert, ArrowRight, X } from 'lucide-react'
+import { Star, Sparkles, HeartHandshake, ShieldAlert, ArrowRight, X, Utensils, Heart } from 'lucide-react'
+
+export type RatingCategory = 'overall' | 'food' | 'service'
 
 interface LowRatingPromptModalProps {
   isOpen: boolean
   attemptedRating: number
   restaurantName?: string
+  category?: RatingCategory
   onSelectRating: (rating: number) => void
   onClose: () => void
 }
@@ -15,6 +18,7 @@ export default function LowRatingPromptModal({
   isOpen,
   attemptedRating,
   restaurantName = 'Residence Inn',
+  category = 'overall',
   onSelectRating,
   onClose,
 }: LowRatingPromptModalProps) {
@@ -27,6 +31,45 @@ export default function LowRatingPromptModal({
     setTimeout(() => setIsShaking(false), 500)
     onClose()
   }
+
+  // Content configurations based on category
+  const config = {
+    food: {
+      tag: 'Culinary Perfection Commitment',
+      title: 'We Strive For Culinary Excellence!',
+      icon: Utensils,
+      body: `At ${restaurantName}, our master chefs take immense pride in crafting rich aromas, tender dishes, and authentic Indian flavors.`,
+      notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. Ratings below 4 stars cannot be accepted. Kindly consider rating our food 4 or 5 stars so our culinary team can continue delighting you!`,
+      option5Title: '😍 Amazing! (5 Stars)',
+      option5Sub: 'Superb taste, spices & aroma!',
+      option4Title: '🙂 Good (4 Stars)',
+      option4Sub: 'Delicious meal & satisfied flavors',
+    },
+    service: {
+      tag: 'Royal Hospitality Commitment',
+      title: 'We Strive For Royal Hospitality!',
+      icon: Heart,
+      body: `At ${restaurantName}, our team is dedicated to providing warm, prompt, and courteous hospitality to every guest.`,
+      notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. Ratings below 4 stars cannot be accepted. Kindly rate our hospitality 4 or 5 stars so our service staff is celebrated for their hard work!`,
+      option5Title: '👑 Royal & Excellent (5 Stars)',
+      option5Sub: 'Outstanding hospitality, warmth & care!',
+      option4Title: '❤️ Very Good (4 Stars)',
+      option4Sub: 'Warm, attentive, and helpful staff',
+    },
+    overall: {
+      tag: 'Guest Excellence Commitment',
+      title: 'We Strive For 5-Star Excellence!',
+      icon: HeartHandshake,
+      body: `At ${restaurantName}, our entire staff takes immense pride in delivering top-tier hospitality and memorable dining.`,
+      notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. We cannot accept ratings below 4 stars on this survey. Kindly grant us 4 or 5 stars so our team can continue serving you at their best!`,
+      option5Title: 'Give 5 Stars',
+      option5Sub: 'Outstanding & Royal Experience!',
+      option4Title: 'Give 4 Stars',
+      option4Sub: 'Very Good Hospitality',
+    },
+  }[category]
+
+  const Icon = config.icon
 
   return (
     <div
@@ -54,10 +97,10 @@ export default function LowRatingPromptModal({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Floating Crown / Stars Icon Badge */}
+        {/* Floating Crown / Category Icon Badge */}
         <div className="relative mx-auto w-20 h-20">
           <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 text-white flex items-center justify-center shadow-xl shadow-amber-500/25 border-2 border-amber-200/70">
-            <HeartHandshake className="w-10 h-10 drop-shadow-sm text-white" />
+            <Icon className="w-10 h-10 drop-shadow-sm text-white" />
           </div>
           <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-amber-50 border border-amber-300 text-amber-600 shadow-xs">
             <Sparkles className="w-4 h-4 fill-amber-400 text-amber-500 animate-pulse" />
@@ -68,15 +111,15 @@ export default function LowRatingPromptModal({
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-300/80 text-[11px] font-bold text-amber-900 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>Guest Excellence Commitment</span>
+            <span>{config.tag}</span>
           </div>
 
           <h2 id="low-rating-modal-title" className="text-2xl font-black text-stone-900 tracking-tight leading-tight">
-            We Strive For 5-Star Excellence!
+            {config.title}
           </h2>
 
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-sm mx-auto">
-            At <strong className="text-stone-900 font-semibold">{restaurantName}</strong>, our team takes immense pride in delivering top-tier hospitality and memorable experiences.
+            {config.body}
           </p>
         </div>
 
@@ -87,7 +130,7 @@ export default function LowRatingPromptModal({
             <span>Please consider rating us 4 or 5 stars</span>
           </div>
           <p className="text-[12px] text-stone-600 leading-relaxed">
-            You selected <span className="font-bold text-amber-900">{attemptedRating} star{attemptedRating > 1 ? 's' : ''}</span>. We cannot accept ratings below 4 stars on this survey. Kindly grant us 4 or 5 stars so our staff can continue serving you at their best!
+            {config.notice}
           </p>
         </div>
 
@@ -106,8 +149,8 @@ export default function LowRatingPromptModal({
                 ))}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-extrabold leading-tight">Give 5 Stars</span>
-                <span className="text-[10px] text-amber-100 font-medium">Outstanding &amp; Royal Experience!</span>
+                <span className="text-sm font-extrabold leading-tight">{config.option5Title}</span>
+                <span className="text-[10px] text-amber-100 font-medium">{config.option5Sub}</span>
               </div>
             </div>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
@@ -127,8 +170,8 @@ export default function LowRatingPromptModal({
                 <Star className="w-4 h-4 text-stone-300 fill-transparent" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-extrabold leading-tight text-amber-950">Give 4 Stars</span>
-                <span className="text-[10px] text-stone-500 font-medium">Very Good Hospitality</span>
+                <span className="text-sm font-extrabold leading-tight text-amber-950">{config.option4Title}</span>
+                <span className="text-[10px] text-stone-500 font-medium">{config.option4Sub}</span>
               </div>
             </div>
             <ArrowRight className="w-4 h-4 text-amber-700 group-hover:translate-x-1 transition-transform shrink-0" />
