@@ -57,18 +57,18 @@ async function seed() {
       created_at: now,
     },
     {
-      id: 'pm-zaika',
+      id: 'reception',
       business_id: businessId,
       name: 'Reception & Front Desk Stand',
-      slug: 'pm-zaika',
+      slug: 'reception',
       active: true,
       created_at: now,
     },
     {
-      id: 'patna-dining',
+      id: 'room-service',
       business_id: businessId,
-      name: 'In-Room Directory Stand',
-      slug: 'patna-dining',
+      name: 'In-Room Directory QR',
+      slug: 'room-service',
       active: true,
       created_at: now,
     },
@@ -77,7 +77,7 @@ async function seed() {
   for (const c of campaigns) {
     await db.collection('campaigns').doc(c.id).set(c);
   }
-  console.log('✅ Created hotel campaigns: residence-inn, pm-zaika, patna-dining');
+  console.log('✅ Created hotel campaigns: residence-inn, reception, room-service');
 
   // 3. Room Types & Hotel Services (menu_items collection)
   const menuItems = [

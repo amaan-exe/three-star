@@ -14,14 +14,14 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${restaurantName} — Exceptional Hospitality & Dining`,
+          title: `${restaurantName} — Exceptional Hotel Hospitality & Comfort`,
           text: `Check out ${restaurantName} behind P&M Mall and Ion Digital Zone, Patliputra, Patna!`,
           url,
         })
       } catch {}
     } else {
       navigator.clipboard.writeText(url)
-      alert('Hotel & Restaurant link copied to clipboard!')
+      alert('Hotel link copied to clipboard!')
     }
   }
 
