@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getFirestoreDb } from '@/lib/firebase/admin'
+import { recordEvent } from '@/lib/firebase/db'
 import { getSessionFromCookie } from '@/lib/session/cookie'
 import { privateFeedbackSchema } from '@/lib/validation/schemas'
+import { randomUUID } from 'crypto'
 
 interface RouteProps {
   params: Promise<{ id: string }>
@@ -27,32 +29,28 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     }
 
     const { category, message, contact_name, contact_value, contact_consent } = parsed.data
-    const supabase = createAdminClient()
+    const db = getFirestoreDb()
+    const feedbackId = randomUUID()
+    const now = new Date().toISOString()
 
-    // 2. Insert into private_feedback table
-    const { data: feedback, error: feedbackError } = await supabase
-      .from('private_feedback')
-      .insert({
-        session_id: id,
-        business_id: cookie.business_id,
-        category,
-        message,
-        contact_name: contact_name || null,
-        contact_value: contact_value || null,
-        contact_consent,
-      })
-      .select('id')
-      .single()
-
-    if (feedbackError || !feedback) {
-      console.error('Private feedback insert error:', feedbackError)
-      return NextResponse.json({ error: 'Failed to record feedback' }, { status: 500 })
-    }
-
-    // 3. Record PRIVATE_FEEDBACK_SUBMITTED event
-    await supabase.from('events').insert({
+    // 2. Insert into private_feedback collection in Firestore
+    await db.collection('private_feedback').doc(feedbackId).set({
+      id: feedbackId,
       session_id: id,
       business_id: cookie.business_id,
+      category,
+      message,
+      contact_name: contact_name || null,
+      contact_value: contact_value || null,
+      contact_consent,
+      created_at: now,
+    })
+
+    // 3. Record PRIVATE_FEEDBACK_SUBMITTED event in Firestore
+    await recordEvent({
+      session_id: id,
+      business_id: cookie.business_id,
+      campaign_id: cookie.campaign_id,
       event_type: 'PRIVATE_FEEDBACK_SUBMITTED',
       metadata: { category, has_contact: Boolean(contact_value) },
     })

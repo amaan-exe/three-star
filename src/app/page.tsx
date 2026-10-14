@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getAdminSession } from '@/lib/firebase/auth'
 
 export default async function HomePage({
   searchParams,
@@ -7,19 +7,9 @@ export default async function HomePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const params = await searchParams
-  let user = null
+  const session = await getAdminSession()
 
-  try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.getUser()
-    if (!error && data?.user) {
-      user = data.user
-    }
-  } catch {
-    user = null
-  }
-
-  if (user) {
+  if (session) {
     redirect('/dashboard')
   }
 

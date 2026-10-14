@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getSession, saveAnswer, recordEvent } from '@/lib/firebase/db'
 import { getSessionFromCookie } from '@/lib/session/cookie'
 import {
   overallRatingSchema,
@@ -56,15 +56,8 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       )
     }
 
-    const supabase = createAdminClient()
-
-    // 2. Verify session exists and is not completed
-    const { data: session } = await supabase
-      .from('sessions')
-      .select('id, business_id, status')
-      .eq('id', id)
-      .single()
-
+    // 2. Verify session exists in Firestore and is not completed
+    const session = await getSession(id)
     if (!session) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
@@ -76,37 +69,10 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       )
     }
 
-    // 3. Find question_id for this business and key
-    let { data: question } = await supabase
-      .from('questions')
-      .select('id')
-      .eq('business_id', session.business_id)
-      .eq('key', question_key)
-      .single()
-
-    // If question not found (e.g. default questions not seeded yet), seed or find
-    if (!question) {
-      const { data: newQ } = await supabase
-        .from('questions')
-        .insert({
-          business_id: session.business_id,
-          key: question_key,
-          type: question_key.includes('rating') ? 'rating' : 'text',
-          text: { en: question_key },
-          position: 1,
-        })
-        .select('id')
-        .single()
-      question = newQ
-    }
-
-    if (!question) {
-      return NextResponse.json({ error: 'Question not found' }, { status: 404 })
-    }
-
-    // 4. Upsert answer
+    // 3. Extract value
     const answerValue = validation.data.value !== undefined ? validation.data.value : validation.data
 
+    // Mandatory rule: Rating must be 4 or 5 stars
     if (question_key === 'overall_rating' && typeof answerValue === 'number' && answerValue < 4) {
       return NextResponse.json(
         { error: 'Rating of 4 or 5 stars required' },
@@ -114,31 +80,14 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       )
     }
 
-    const { error: answerError } = await supabase.from('answers').upsert(
-      {
-        session_id: id,
-        question_id: question.id,
-        question_key,
-        value: answerValue,
-      },
-      { onConflict: 'session_id,question_id' }
-    )
+    // 4. Save answer to Firestore
+    await saveAnswer(id, question_key, answerValue, session.business_id)
 
-    if (answerError) {
-      console.error('Answer upsert error:', answerError)
-      return NextResponse.json({ error: 'Failed to record answer' }, { status: 500 })
-    }
-
-    // 5. Update last activity timestamp on session
-    await supabase
-      .from('sessions')
-      .update({ last_activity_at: new Date().toISOString() })
-      .eq('id', id)
-
-    // 6. Record QUESTION_ANSWERED event
-    await supabase.from('events').insert({
+    // 5. Record QUESTION_ANSWERED event
+    await recordEvent({
       session_id: id,
       business_id: session.business_id,
+      campaign_id: session.campaign_id,
       event_type: 'QUESTION_ANSWERED',
       metadata: { question_key, value: answerValue },
     })

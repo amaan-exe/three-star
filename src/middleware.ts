@@ -1,7 +1,13 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { jwtVerify } from 'jose'
 import { botFilterMiddleware } from '@/lib/middleware/bot-filter'
 import { rateLimitMiddleware } from '@/lib/middleware/rate-limit'
+
+const ADMIN_COOKIE_NAME = 'rp_admin_session'
+const getSecret = () =>
+  new TextEncoder().encode(
+    process.env.SESSION_COOKIE_SECRET || 'residence-inn-patna-secret-key-32-chars-jwt!'
+  )
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -18,44 +24,28 @@ export async function middleware(request: NextRequest) {
     if (rateLimitResponse) return rateLimitResponse
   }
 
-  // 3. Supabase auth session refresh for dashboard routes
-  let response = NextResponse.next({ request: { headers: request.headers } })
-
+  // 3. Admin session verification for dashboard routes
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/dashboard')) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value
 
-    if (supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder')) {
+    let isValid = false
+    if (token) {
       try {
-        const supabase = createServerClient(
-          supabaseUrl,
-          supabaseAnonKey,
-          {
-            cookies: {
-              getAll: () => request.cookies.getAll(),
-              setAll: (cookiesToSet) => {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                  response.cookies.set(name, value, options)
-                )
-              },
-            },
-          }
-        )
-
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user && !pathname.startsWith('/login')) {
-          return NextResponse.redirect(new URL('/login', request.url))
-        }
+        await jwtVerify(token, getSecret(), { algorithms: ['HS256'] })
+        isValid = true
       } catch {
-        // Fall back to redirect if auth error occurs
+        isValid = false
       }
+    }
+
+    if (!isValid && !pathname.startsWith('/login')) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
     }
   }
 
-  return response
+  return NextResponse.next({ request: { headers: request.headers } })
 }
 
 export const config = {

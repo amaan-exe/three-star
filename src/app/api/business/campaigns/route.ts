@@ -1,55 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminSession } from '@/lib/firebase/auth'
+import { getFirestoreDb } from '@/lib/firebase/admin'
 import { campaignCreateSchema } from '@/lib/validation/schemas'
 import { generateRandomSlug } from '@/lib/utils/slug'
+import { randomUUID } from 'crypto'
 import { z } from 'zod'
 
 const patchCampaignSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   active: z.boolean().optional(),
   name: z.string().min(1).max(200).optional(),
 })
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+    const user = await getAdminSession()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const admin = createAdminClient()
-
-    // Find business owned by user, falling back to primary business
-    let businessId: string | null = null
-    const { data: userBusinesses } = await admin
-      .from('businesses')
-      .select('id')
-      .eq('owner_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-
-    if (userBusinesses && userBusinesses.length > 0) {
-      businessId = userBusinesses[0].id
-    } else {
-      const { data: defaultBiz } = await admin
-        .from('businesses')
-        .select('id')
-        .order('created_at', { ascending: true })
-        .limit(1)
-      if (defaultBiz && defaultBiz.length > 0) {
-        businessId = defaultBiz[0].id
-      }
-    }
-
-    if (!businessId) {
-      return NextResponse.json({ error: 'Restaurant profile not found' }, { status: 404 })
-    }
-
+    const businessId = user.businessId || 'residence-inn'
     const body = await request.json().catch(() => ({}))
     const parsed = campaignCreateSchema.safeParse(body)
 
@@ -62,24 +32,26 @@ export async function POST(request: NextRequest) {
 
     const { name, slug } = parsed.data
     const campaignSlug = slug || generateRandomSlug(8)
+    const db = getFirestoreDb()
 
-    const { data: newCampaign, error: createError } = await admin
-      .from('campaigns')
-      .insert({
-        business_id: businessId,
-        name,
-        slug: campaignSlug,
-        active: true,
-      })
-      .select()
-      .single()
-
-    if (createError || !newCampaign) {
-      if (createError?.code === '23505') {
-        return NextResponse.json({ error: 'A campaign with this slug already exists' }, { status: 409 })
-      }
-      return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 })
+    // Check slug collision
+    const existingSnap = await db.collection('campaigns').where('slug', '==', campaignSlug).get()
+    if (!existingSnap.empty) {
+      return NextResponse.json({ error: 'A campaign with this slug already exists' }, { status: 409 })
     }
+
+    const id = campaignSlug
+    const now = new Date().toISOString()
+    const newCampaign = {
+      id,
+      business_id: businessId,
+      name,
+      slug: campaignSlug,
+      active: true,
+      created_at: now,
+    }
+
+    await db.collection('campaigns').doc(id).set(newCampaign)
 
     return NextResponse.json(newCampaign, { status: 201 })
   } catch (error) {
@@ -90,11 +62,7 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+    const user = await getAdminSession()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -106,41 +74,18 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { id, active, name } = parsed.data
-    const admin = createAdminClient()
+    const db = getFirestoreDb()
 
-    // Verify ownership
-    const { data: campaign } = await admin
-      .from('campaigns')
-      .select('id, business_id')
-      .eq('id', id)
-      .maybeSingle()
-
-    if (!campaign) {
-      return NextResponse.json({ error: 'Campaign not found or unauthorized' }, { status: 404 })
-    }
-
-    const updateData: {
-      updated_at: string
-      active?: boolean
-      name?: string
-    } = {
+    const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
     }
     if (active !== undefined) updateData.active = active
     if (name !== undefined) updateData.name = name
 
-    const { data: updated, error: updateError } = await admin
-      .from('campaigns')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single()
+    await db.collection('campaigns').doc(id).set(updateData, { merge: true })
 
-    if (updateError || !updated) {
-      return NextResponse.json({ error: 'Failed to update campaign' }, { status: 500 })
-    }
-
-    return NextResponse.json(updated, { status: 200 })
+    const updatedDoc = await db.collection('campaigns').doc(id).get()
+    return NextResponse.json({ id, ...updatedDoc.data() }, { status: 200 })
   } catch (error) {
     console.error('Campaign update error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -149,11 +94,7 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+    const user = await getAdminSession()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -164,27 +105,8 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Missing campaign id' }, { status: 400 })
     }
 
-    const admin = createAdminClient()
-
-    // Verify ownership
-    const { data: campaign } = await admin
-      .from('campaigns')
-      .select('id, business_id')
-      .eq('id', id)
-      .maybeSingle()
-
-    if (!campaign) {
-      return NextResponse.json({ error: 'Campaign not found or unauthorized' }, { status: 404 })
-    }
-
-    const { error: deleteError } = await admin
-      .from('campaigns')
-      .delete()
-      .eq('id', id)
-
-    if (deleteError) {
-      return NextResponse.json({ error: 'Failed to delete campaign' }, { status: 500 })
-    }
+    const db = getFirestoreDb()
+    await db.collection('campaigns').doc(id).delete()
 
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
@@ -192,4 +114,3 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-

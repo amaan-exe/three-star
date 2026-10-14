@@ -1,28 +1,18 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getAdminSession, clearAdminSessionCookie } from '@/lib/firebase/auth'
 import Link from 'next/link'
 import { Sparkles, LayoutDashboard, QrCode, MessageSquare, Utensils, Settings, LogOut, Users } from 'lucide-react'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  let user = null
-  try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.getUser()
-    if (!error && data?.user) {
-      user = data.user
-    }
-  } catch {
-    user = null
-  }
+  const sessionUser = await getAdminSession()
 
-  if (!user) {
+  if (!sessionUser) {
     redirect('/login')
   }
 
   async function signOutAction() {
     'use server'
-    const serverSupabase = await createClient()
-    await serverSupabase.auth.signOut()
+    await clearAdminSessionCookie()
     redirect('/login')
   }
 
@@ -91,7 +81,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-xs font-semibold text-slate-200 truncate max-w-[200px]">
-                {user.email}
+                {sessionUser.email}
               </span>
               <span className="text-[11px] text-amber-400 font-medium flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-amber-400" /> Residence Inn Owner

@@ -244,7 +244,7 @@ export async function runComplianceSuite(): Promise<{
     ruleId: 'CG-10',
     title: 'Zero Synthetic Counter Manipulation',
     passed: true,
-    details: 'All overview metrics aggregate live from Supabase tables (sessions, events, answers) without fake multipliers or simulated baseline values.',
+    details: 'All overview metrics aggregate live from Firestore collections (sessions, events, answers) without fake multipliers or simulated baseline values.',
   })
 
   const allPassed = results.every((r) => r.passed)

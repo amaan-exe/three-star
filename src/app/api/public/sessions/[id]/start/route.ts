@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getSession, recordEvent } from '@/lib/firebase/db'
+import { getFirestoreDb } from '@/lib/firebase/admin'
 import { getSessionFromCookie } from '@/lib/session/cookie'
 
 interface RouteProps {
@@ -16,16 +17,9 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 403 })
     }
 
-    const supabase = createAdminClient()
-
-    // 2. Fetch session
-    const { data: session, error } = await supabase
-      .from('sessions')
-      .select('id, business_id, status, started_at')
-      .eq('id', id)
-      .single()
-
-    if (error || !session) {
+    // 2. Fetch session from Firestore
+    const session = await getSession(id)
+    if (!session) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
@@ -35,21 +29,23 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     }
 
     const now = new Date().toISOString()
+    const db = getFirestoreDb()
 
     // 4. Update session status
-    await supabase
-      .from('sessions')
-      .update({
+    await db.collection('sessions').doc(id).set(
+      {
         status: 'in_progress',
         started_at: now,
         last_activity_at: now,
-      })
-      .eq('id', id)
+      },
+      { merge: true }
+    )
 
-    // 5. Fire QUIZ_STARTED event
-    await supabase.from('events').insert({
+    // 5. Fire QUIZ_STARTED event in Firestore
+    await recordEvent({
       session_id: id,
       business_id: session.business_id,
+      campaign_id: session.campaign_id,
       event_type: 'QUIZ_STARTED',
       metadata: {},
     })

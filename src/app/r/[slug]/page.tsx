@@ -1,4 +1,5 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getCampaignBySlug, getMenuItems, getSession, getSessionAnswers } from '@/lib/firebase/db'
+import { getFirestoreDb } from '@/lib/firebase/admin'
 import QuizFlow from '@/components/quiz/QuizFlow'
 import { Sparkles, AlertTriangle } from 'lucide-react'
 import { cookies } from 'next/headers'
@@ -8,33 +9,16 @@ interface PublicQuizPageProps {
   searchParams: Promise<{ new?: string }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function PublicQuizPage({ params, searchParams }: PublicQuizPageProps) {
   const { slug } = await params
   const { new: forceNew } = await searchParams
-  const supabase = createAdminClient()
 
-  // 1. Look up campaign by slug
-  let { data: campaign } = await supabase
-    .from('campaigns')
-    .select('id, active, slug, business_id, google_review_url_override, businesses(id, name, logo_url, primary_color, welcome_message, google_review_url)')
-    .eq('slug', slug)
-    .maybeSingle()
+  // 1. Look up campaign and business in Firestore
+  const { campaign, business } = await getCampaignBySlug(slug)
 
-  // Graceful fallback: If this slug was deleted or user enters custom slug, resolve to the active Residence Inn campaign
-  if (!campaign) {
-    const { data: fallbackCampaign } = await supabase
-      .from('campaigns')
-      .select('id, active, slug, business_id, google_review_url_override, businesses(id, name, logo_url, primary_color, welcome_message, google_review_url)')
-      .eq('active', true)
-      .limit(1)
-      .maybeSingle()
-
-    if (fallbackCampaign) {
-      campaign = fallbackCampaign
-    }
-  }
-
-  // Fallback screen if no campaign exists at all
+  // Fallback screen if no campaign exists
   if (!campaign) {
     return (
       <div className="min-h-screen bg-stone-50 text-stone-900 flex items-center justify-center p-4">
@@ -84,24 +68,13 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
     )
   }
 
-  const business = campaign.businesses as {
-    id: string
-    name: string
-    logo_url: string | null
-    primary_color: string | null
-    welcome_message: Record<string, string> | null
-    google_review_url: string | null
-  } | null
-
-  const googleReviewUrl = campaign.google_review_url_override || business?.google_review_url
+  const googleReviewUrl =
+    campaign.google_review_url_override ||
+    business?.google_review_url ||
+    'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU'
 
   // 2. Fetch menu items for the ordered items step
-  const { data: menuItems } = await supabase
-    .from('menu_items')
-    .select('id, name')
-    .eq('business_id', campaign.business_id)
-    .eq('active', true)
-    .order('position')
+  const menuItems = await getMenuItems(campaign.business_id)
 
   // 3. Resume existing session if cookie is present and ?new=1 is NOT passed
   let existingSessionId: string | null = null
@@ -113,37 +86,18 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
     const cookieStore = await cookies()
     const sessionCookie = cookieStore.get(`session_${slug}`)
     if (sessionCookie?.value) {
-      const { data: session } = await supabase
-        .from('sessions')
-        .select('id, status')
-        .eq('id', sessionCookie.value)
-        .eq('campaign_id', campaign.id)
-        .maybeSingle()
-
-      if (session) {
+      const session = await getSession(sessionCookie.value)
+      if (session && session.campaign_id === campaign.id) {
         existingSessionId = session.id
         existingStatus = session.status
-
-        const { data: answers } = await supabase
-          .from('answers')
-          .select('question_key, value')
-          .eq('session_id', session.id)
-
-        if (answers) {
-          for (const a of answers) {
-            existingAnswers[a.question_key] = a.value
-          }
-        }
+        existingAnswers = await getSessionAnswers(session.id)
 
         if (session.status === 'completed') {
-          const { data: draftRecord } = await supabase
-            .from('review_drafts')
-            .select('final_text, original_text')
-            .eq('session_id', session.id)
-            .maybeSingle()
-
-          if (draftRecord) {
-            existingDraftText = draftRecord.final_text || draftRecord.original_text || null
+          const db = getFirestoreDb()
+          const draftDoc = await db.collection('review_drafts').doc(session.id).get()
+          if (draftDoc.exists) {
+            const draftData = draftDoc.data()
+            existingDraftText = draftData?.final_text || draftData?.original_text || null
           }
         }
       }
@@ -175,15 +129,15 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
       <QuizFlow
         slug={campaign.slug}
         restaurantName={restaurantName}
-        logoUrl={business?.logo_url}
-        primaryColor={business?.primary_color}
+        logoUrl={business?.logo_url || null}
+        primaryColor={business?.primary_color || '#d97706'}
         welcomeMessage={welcomeText}
         googleReviewUrl={googleReviewUrl}
         initialSessionId={existingSessionId}
         initialStatus={existingStatus}
         initialAnswers={existingAnswers}
         initialDraftText={existingDraftText}
-        menuItems={menuItems || []}
+        menuItems={menuItems.map((m) => ({ id: m.id, name: m.name }))}
       />
 
       {/* Mobile-Friendly Footer */}

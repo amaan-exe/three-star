@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { recordEvent, getSession } from '@/lib/firebase/db'
 import { getSessionFromCookie } from '@/lib/session/cookie'
 import { clientEventSchema } from '@/lib/validation/schemas'
 
@@ -27,10 +27,9 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     }
 
     const { event_type, client_event_id, metadata } = parsed.data
-    const supabase = createAdminClient()
 
-    // 2. Insert event with ON CONFLICT DO NOTHING (idempotency on session_id, client_event_id)
-    const { error } = await supabase.from('events').insert({
+    // 2. Insert event in Firestore
+    await recordEvent({
       session_id: id,
       business_id: cookie.business_id,
       campaign_id: cookie.campaign_id,
@@ -38,15 +37,6 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       client_event_id,
       metadata: metadata as any,
     })
-
-    if (error) {
-      // Postgres unique violation code is 23505
-      if (error.code === '23505') {
-        return NextResponse.json({ success: true, duplicate: true }, { status: 200 })
-      }
-      console.error('Event insert error:', error)
-      return NextResponse.json({ error: 'Failed to record event' }, { status: 500 })
-    }
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (error) {

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminSession, hashAdminPassword } from '@/lib/firebase/auth'
+import { getFirestoreDb } from '@/lib/firebase/admin'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}))
-    const { newPassword, accessToken } = body
+    const { newPassword } = body
 
     if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
       return NextResponse.json(
@@ -14,51 +14,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let targetUserId: string | null = null
+    const session = await getAdminSession()
+    const targetEmail = session?.email || 'admin@residency.com'
 
-    // 1. Check session from server cookies
-    const supabase = await createClient()
-    const {
-      data: { user: sessionUser },
-    } = await supabase.auth.getUser()
+    const db = getFirestoreDb()
+    const userSnap = await db
+      .collection('users')
+      .where('email', '==', targetEmail)
+      .limit(1)
+      .get()
 
-    if (sessionUser?.id) {
-      targetUserId = sessionUser.id
-    }
-
-    // 2. If no cookie session, check client-provided accessToken (from hash token recovery)
-    if (!targetUserId && accessToken && typeof accessToken === 'string') {
-      const {
-        data: { user: tokenUser },
-      } = await supabase.auth.getUser(accessToken)
-
-      if (tokenUser?.id) {
-        targetUserId = tokenUser.id
-      }
-    }
-
-    if (!targetUserId) {
+    if (userSnap.empty) {
       return NextResponse.json(
-        {
-          error:
-            'Your password recovery session has expired or is invalid. Please request a fresh reset link.',
-        },
+        { error: 'Your password recovery session has expired or is invalid.' },
         { status: 401 }
       )
     }
 
-    // 3. Update password authoritatively using Admin Client
-    const admin = createAdminClient()
-    const { error: updateError } = await admin.auth.admin.updateUserById(targetUserId, {
-      password: newPassword,
-    })
+    const userDoc = userSnap.docs[0]
+    const newHashed = hashAdminPassword(newPassword)
 
-    if (updateError) {
-      return NextResponse.json(
-        { error: updateError.message || 'Failed to update password.' },
-        { status: 500 }
-      )
-    }
+    await db.collection('users').doc(userDoc.id).set(
+      {
+        password_hash: newHashed,
+        updated_at: new Date().toISOString(),
+      },
+      { merge: true }
+    )
 
     return NextResponse.json({
       success: true,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getCampaignBySlug, getSession, createSession, recordEvent } from '@/lib/firebase/db'
 import { getSessionFromCookie, setSessionCookie } from '@/lib/session/cookie'
 import { hashIp, hashUserAgent } from '@/lib/utils/hash'
 import { slugSchema } from '@/lib/validation/schemas'
@@ -22,30 +22,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { slug } = parsed.data
-    const supabase = createAdminClient()
 
-    // 1. Look up campaign & business
-    let { data: campaign, error: campaignError } = await supabase
-      .from('campaigns')
-      .select('id, active, business_id, businesses(id, name, logo_url, primary_color, welcome_message, google_review_url)')
-      .eq('slug', slug)
-      .maybeSingle()
+    // 1. Look up campaign & business from Firestore
+    const { campaign, business } = await getCampaignBySlug(slug)
 
-    if (!campaign) {
-      const { data: fallbackCampaign } = await supabase
-        .from('campaigns')
-        .select('id, active, business_id, businesses(id, name, logo_url, primary_color, welcome_message, google_review_url)')
-        .eq('active', true)
-        .limit(1)
-        .maybeSingle()
-
-      if (fallbackCampaign) {
-        campaign = fallbackCampaign
-        campaignError = null
-      }
-    }
-
-    if (campaignError || !campaign) {
+    if (!campaign || !business) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
     }
 
@@ -53,31 +34,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Campaign is inactive' }, { status: 410 })
     }
 
-    const business = campaign.businesses as {
-      id: string
-      name: string
-      logo_url: string | null
-      primary_color: string | null
-      welcome_message: any
-      google_review_url: string | null
-    }
-
     // 2. Check for existing active session from cookie
     const existingCookie = await getSessionFromCookie()
     if (existingCookie && existingCookie.campaign_id === campaign.id) {
-      const { data: existingSession } = await supabase
-        .from('sessions')
-        .select('id, status')
-        .eq('id', existingCookie.session_id)
-        .single()
-
+      const existingSession = await getSession(existingCookie.session_id)
       if (existingSession && existingSession.status !== 'completed') {
         return NextResponse.json(
           {
             session_id: existingSession.id,
             business_name: business.name,
-            logo_url: business.logo_url,
-            primary_color: business.primary_color,
+            logo_url: business.logo_url || null,
+            primary_color: business.primary_color || '#d97706',
             welcome_message: business.welcome_message,
             google_review_url_exists: Boolean(business.google_review_url),
           },
@@ -90,22 +57,13 @@ export async function POST(request: NextRequest) {
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
     const ua = request.headers.get('user-agent')
 
-    // 4. Create new session
-    const { data: newSession, error: sessionError } = await supabase
-      .from('sessions')
-      .insert({
-        campaign_id: campaign.id,
-        business_id: campaign.business_id,
-        status: 'landed',
-        ip_hash: hashIp(ip),
-        ua_hash: hashUserAgent(ua),
-      })
-      .select('id')
-      .single()
-
-    if (sessionError || !newSession) {
-      return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
-    }
+    // 4. Create new session in Firestore
+    const newSession = await createSession({
+      campaign_id: campaign.id,
+      business_id: campaign.business_id,
+      ip_hash: hashIp(ip) || undefined,
+      ua_hash: hashUserAgent(ua) || undefined,
+    })
 
     // 5. Set signed session cookie
     await setSessionCookie({
@@ -114,28 +72,29 @@ export async function POST(request: NextRequest) {
       business_id: campaign.business_id,
     })
 
-    // 6. Log QR_SCANNED and LANDING_VIEWED events
-    await supabase.from('events').insert([
-      {
-        session_id: newSession.id,
-        business_id: campaign.business_id,
-        event_type: 'QR_SCANNED',
-        metadata: { slug },
-      },
-      {
-        session_id: newSession.id,
-        business_id: campaign.business_id,
-        event_type: 'LANDING_VIEWED',
-        metadata: {},
-      },
-    ])
+    // 6. Log QR_SCANNED and LANDING_VIEWED events in Firestore
+    await recordEvent({
+      session_id: newSession.id,
+      business_id: campaign.business_id,
+      campaign_id: campaign.id,
+      event_type: 'QR_SCANNED',
+      metadata: { slug },
+    })
+
+    await recordEvent({
+      session_id: newSession.id,
+      business_id: campaign.business_id,
+      campaign_id: campaign.id,
+      event_type: 'LANDING_VIEWED',
+      metadata: {},
+    })
 
     return NextResponse.json(
       {
         session_id: newSession.id,
         business_name: business.name,
-        logo_url: business.logo_url,
-        primary_color: business.primary_color,
+        logo_url: business.logo_url || null,
+        primary_color: business.primary_color || '#d97706',
         welcome_message: business.welcome_message,
         google_review_url_exists: Boolean(business.google_review_url),
       },

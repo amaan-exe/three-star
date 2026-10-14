@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import type { Database } from '@/lib/supabase/types'
-import { resolveZaikaEmail } from '@/lib/auth-helpers'
+import { authenticateAdminUser, signAdminToken } from '@/lib/firebase/auth'
+
+const ADMIN_COOKIE_NAME = 'rp_admin_session'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,60 +15,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Resolve owner aliases
-    const resolvedEmail = resolveZaikaEmail(username) || String(username).trim()
+    const user = await authenticateAdminUser(String(username), String(password))
 
-    // Prepare response object to collect cookies
-    let response = NextResponse.json({ success: true })
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createServerClient<Database>(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        cookies: {
-          getAll: () => request.cookies.getAll(),
-          setAll: (cookiesToSet) => {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, {
-                ...options,
-                path: '/',
-                sameSite: 'lax',
-                secure: process.env.NODE_ENV === 'production',
-              })
-            })
-          },
-        },
-      }
-    )
-
-    // Sign in with 8s timeout to prevent any indefinite hanging
-    const authPromise = supabase.auth.signInWithPassword({
-      email: resolvedEmail,
-      password: String(password),
-    })
-
-    const timeoutPromise = new Promise<{ data: any; error: any }>((_, reject) =>
-      setTimeout(() => reject(new Error('Authentication service timeout. Please try again.')), 8000)
-    )
-
-    const { data, error } = await Promise.race([authPromise, timeoutPromise])
-
-    if (error) {
+    if (!user) {
       return NextResponse.json(
-        { error: error.message || 'Invalid username or password' },
+        { error: 'Invalid username or password. For Residence Inn admin, use admin@residency.com or admin with your access key.' },
         { status: 401 }
       )
     }
 
-    if (!data.user) {
-      return NextResponse.json(
-        { error: 'User account not found' },
-        { status: 404 }
-      )
-    }
+    const token = await signAdminToken(user)
+
+    const response = NextResponse.json({
+      success: true,
+      user: {
+        email: user.email,
+        role: user.role,
+        businessId: user.businessId,
+      },
+    })
+
+    response.cookies.set(ADMIN_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    })
 
     return response
   } catch (err: any) {

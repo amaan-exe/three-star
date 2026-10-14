@@ -1,10 +1,10 @@
 /**
- * PM Zaika Restaurant Authentication & Alias Helpers
+ * Residence Inn Restaurant Authentication & Alias Helpers
  */
 
-export const PM_ZAIKA_PRIMARY_EMAIL = 'invincibleperson9@gmail.com'
+export const RESIDENCE_INN_PRIMARY_EMAIL = 'admin@residency.com'
 
-const ZAIKA_ALIASES = new Set([
+const RESIDENCE_ALIASES = new Set([
   'admin',
   'owner',
   'residency',
@@ -15,22 +15,11 @@ const ZAIKA_ALIASES = new Set([
   'residence-inn',
   'admin@residenceinn.com',
   'owner@residenceinn.com',
-  'zaika',
-  'pmzaika',
-  'pm-zaika',
-  'admin@pmzaika.com',
-  'owner@pmzaika.com',
-  'admin@pm-zaika.com',
-  'owner@pm-zaika.com',
-  'pmzaika@gmail.com',
-  'pmzaikapatna@gmail.com',
-  'biryani',
-  'charminar',
 ])
 
 /**
  * Resolves any restaurant administrator alias or custom email
- * to the registered Supabase Auth email.
+ * to the registered Residence Inn admin email.
  */
 export function resolveZaikaEmail(input?: string | null): string | null {
   if (!input || typeof input !== 'string') return null
@@ -38,8 +27,8 @@ export function resolveZaikaEmail(input?: string | null): string | null {
   if (!trimmed) return null
 
   const lower = trimmed.toLowerCase()
-  if (ZAIKA_ALIASES.has(lower)) {
-    return PM_ZAIKA_PRIMARY_EMAIL
+  if (RESIDENCE_ALIASES.has(lower)) {
+    return RESIDENCE_INN_PRIMARY_EMAIL
   }
 
   return trimmed

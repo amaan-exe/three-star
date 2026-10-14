@@ -21,7 +21,6 @@ import {
   Utensils,
   Lock,
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -35,14 +34,11 @@ function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isExpired, setIsExpired] = useState(false)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
 
   // Resend state if link expired
   const [resendUsername, setResendUsername] = useState('admin')
   const [resendLoading, setResendLoading] = useState(false)
   const [resendMessage, setResendMessage] = useState<string | null>(null)
-
-  const supabase = createClient()
 
   // Calculate password strength
   const calculateStrength = (pass: string) => {
@@ -61,49 +57,21 @@ function ResetPasswordForm() {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // 1. Check search params
     const qErrorCode = searchParams.get('error_code')
     const qErrorDesc = searchParams.get('error_description')
 
-    // 2. Check hash fragments (Supabase auth redirects frequently land in hash)
-    const hashString = window.location.hash.replace(/^#/, '')
-    const hashParams = new URLSearchParams(hashString)
-    const hErrorCode = hashParams.get('error_code')
-    const hErrorDesc = hashParams.get('error_description')
-    const hAccessToken = hashParams.get('access_token')
-    const hType = hashParams.get('type')
-
-    if (hAccessToken) {
-      setAccessToken(hAccessToken)
-    }
-
-    if (qErrorCode === 'otp_expired' || hErrorCode === 'otp_expired') {
+    if (qErrorCode === 'otp_expired') {
       setIsExpired(true)
-      setError('This password reset link is invalid or has expired. Links can expire if clicked late or if scanned by email security bots.')
+      setError('This password reset link is invalid or has expired.')
       return
     }
 
-    if (qErrorDesc || hErrorDesc) {
-      const raw = qErrorDesc || hErrorDesc || ''
+    if (qErrorDesc) {
       setIsExpired(true)
-      setError(decodeURIComponent(raw.replace(/\+/g, ' ')))
+      setError(decodeURIComponent(qErrorDesc.replace(/\+/g, ' ')))
       return
     }
-
-    // 3. Listen to Supabase auth events (e.g. PASSWORD_RECOVERY)
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'PASSWORD_RECOVERY' || session) {
-        setIsExpired(false)
-        if (session?.access_token) {
-          setAccessToken(session.access_token)
-        }
-      }
-    })
-
-    return () => {
-      authListener?.subscription?.unsubscribe()
-    }
-  }, [searchParams, supabase])
+  }, [searchParams])
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -123,27 +91,18 @@ function ResetPasswordForm() {
     setLoading(true)
 
     try {
-      // 1. Try our server endpoint with session/access token
       const res = await fetch('/api/auth/update-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           newPassword: password,
-          accessToken: accessToken || undefined,
         }),
       })
 
       const data = await res.json().catch(() => ({}))
 
       if (!res.ok) {
-        // Fallback: try client-side Supabase update
-        const { error: clientError } = await supabase.auth.updateUser({
-          password,
-        })
-
-        if (clientError) {
-          throw new Error(data.error || clientError.message || 'Failed to update password.')
-        }
+        throw new Error(data.error || 'Failed to update password.')
       }
 
       setSuccess('Password updated successfully! Redirecting to dashboard...')

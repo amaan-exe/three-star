@@ -498,7 +498,7 @@ export default function ChangePasswordModal({
         {/* Footer info */}
         <div className="p-3 bg-slate-950/90 border-t border-slate-800/80 text-[11px] text-slate-500 flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-amber-500/70" />
-          <span>Secured via Supabase Authentication &amp; Encrypted Sessions</span>
+          <span>Secured via Encrypted Firestore Sessions</span>
         </div>
       </div>
     </div>

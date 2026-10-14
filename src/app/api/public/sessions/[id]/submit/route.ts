@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { getSessionFromCookie } from '@/lib/session/cookie'
+import { getSession, getSessionAnswers, saveAnswer, recordEvent } from '@/lib/firebase/db'
+import { getFirestoreDb } from '@/lib/firebase/admin'
 import { ratingSchema } from '@/lib/validation/schemas'
 import { logEvent } from '@/lib/observability/logger'
 
@@ -15,28 +15,15 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     const body = await request.json().catch(() => ({}))
     const providedAnswers = body?.answers || {}
 
-    const supabase = createAdminClient()
+    // 1. Fetch session from Firestore
+    const session = await getSession(id)
 
-    // 1. Fetch session from database
-    const { data: session, error: sessionError } = await supabase
-      .from('sessions')
-      .select('id, business_id, status, completed_at')
-      .eq('id', id)
-      .maybeSingle()
-
-    if (sessionError || !session) {
-      console.warn(`[Submit] Session ${id} not found:`, sessionError)
+    if (!session) {
+      console.warn(`[Submit] Session ${id} not found`)
       return NextResponse.json({ error: 'Session not found or expired' }, { status: 404 })
     }
 
-    // 2. Validate session cookie (or permit if valid session exists in DB)
-    const cookie = await getSessionFromCookie()
-    if (cookie && cookie.session_id !== id) {
-      console.warn(`[Submit] Cookie mismatch for session ${id} vs cookie ${cookie.session_id}`)
-      // Still permit if session is active in database for this device
-    }
-
-    // 3. Idempotent check: if already completed, return success immediately
+    // 2. Idempotent check: if already completed, return success immediately
     if (session.status === 'completed') {
       return NextResponse.json(
         { success: true, status: 'completed', message: 'Session already completed' },
@@ -44,24 +31,18 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       )
     }
 
-    // 4. Fetch stored answers for this session
-    const { data: storedAnswers } = await supabase
-      .from('answers')
-      .select('question_key, value')
-      .eq('session_id', id)
+    // 3. Fetch stored answers from Firestore
+    const storedAnswers = await getSessionAnswers(id)
+    const answerMap = new Map<string, any>(Object.entries(storedAnswers))
 
-    const answerMap = new Map<string, any>(
-      (storedAnswers || []).map((a) => [a.question_key, a.value])
-    )
-
-    // Merge answers provided in submit payload (ensures fast one-shot completion without race conditions)
+    // Merge answers provided in submit payload
     for (const [k, v] of Object.entries(providedAnswers)) {
       if (v !== undefined && v !== null && !answerMap.has(k)) {
         answerMap.set(k, v)
       }
     }
 
-    // 5. Validate required core questions: overall_rating, food_rating, service_rating
+    // 4. Validate required core questions: overall_rating, food_rating, service_rating
     const requiredKeys = ['overall_rating', 'food_rating', 'service_rating']
     const missing: string[] = []
 
@@ -95,60 +76,31 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       )
     }
 
-    // 6. Save any provided answers that were not yet in the DB
-    if (Object.keys(providedAnswers).length > 0) {
-      try {
-        const { data: questions } = await supabase
-          .from('questions')
-          .select('id, key')
-          .eq('business_id', session.business_id)
-
-        const qMap = new Map((questions || []).map((q) => [q.key, q.id]))
-
-        const toInsert: Array<{ session_id: string; question_id: string; question_key: string; value: any }> = []
-        for (const [k, v] of Object.entries(providedAnswers)) {
-          if (v !== undefined && v !== null) {
-            let qId = qMap.get(k)
-            if (qId) {
-              toInsert.push({
-                session_id: id,
-                question_id: qId,
-                question_key: k,
-                value: v,
-              })
-            }
-          }
-        }
-
-        if (toInsert.length > 0) {
-          await supabase.from('answers').upsert(toInsert, { onConflict: 'session_id,question_id' })
-        }
-      } catch (err) {
-        console.warn('[Submit] Answers bulk upsert warning:', err)
+    // 5. Save any provided answers to Firestore
+    for (const [k, v] of Object.entries(providedAnswers)) {
+      if (v !== undefined && v !== null) {
+        await saveAnswer(id, k, v, session.business_id)
       }
     }
 
     const now = new Date().toISOString()
+    const db = getFirestoreDb()
 
-    // 7. Mark session as completed
-    const { error: updateError } = await supabase
-      .from('sessions')
-      .update({
+    // 6. Mark session as completed in Firestore
+    await db.collection('sessions').doc(id).set(
+      {
         status: 'completed',
         completed_at: now,
         last_activity_at: now,
-      })
-      .eq('id', id)
+      },
+      { merge: true }
+    )
 
-    if (updateError) {
-      console.error('[Submit] Failed to update session status:', updateError)
-      return NextResponse.json({ error: 'Failed to complete session' }, { status: 500 })
-    }
-
-    // 8. Fire QUIZ_COMPLETED event
-    await supabase.from('events').insert({
+    // 7. Fire QUIZ_COMPLETED event in Firestore
+    await recordEvent({
       session_id: id,
       business_id: session.business_id,
+      campaign_id: session.campaign_id,
       event_type: 'QUIZ_COMPLETED',
       metadata: {
         total_answers: answerMap.size,

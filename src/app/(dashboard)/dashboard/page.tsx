@@ -1,5 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminSession } from '@/lib/firebase/auth'
+import { getFirestoreDb } from '@/lib/firebase/admin'
+import { getBusiness as getBizDoc, getAllMenuItems, getCampaigns } from '@/lib/firebase/db'
 import OnboardingWizard from '@/components/dashboard/OnboardingWizard'
 import DashboardWorkspace from '@/components/dashboard/DashboardWorkspace'
 import type { AnalyticsData } from '@/components/dashboard/OverviewTab'
@@ -16,105 +17,77 @@ export const revalidate = 0
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const { tab } = await searchParams
-  let user = null
-  try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.getUser()
-    if (!error && data?.user) {
-      user = data.user
-    }
-  } catch {
-    user = null
-  }
+  const user = await getAdminSession()
+  const db = getFirestoreDb()
 
-  const admin = createAdminClient()
+  // 1. Fetch restaurant owned by user, or fall back to Residence Inn
+  const business = await getBizDoc(user?.businessId || 'residence-inn')
 
-  // 1. Fetch restaurant owned by user, or fall back to primary business
-  let businessQuery = admin
-    .from('businesses')
-    .select('id, name, location, phone, secondary_phone, primary_color, welcome_message, google_review_url')
-
-  if (user) {
-    businessQuery = businessQuery.eq('owner_id', user.id)
-  }
-
-  const { data: userBusiness } = await businessQuery.limit(1).maybeSingle()
-  let business = userBusiness
-
-  if (!business) {
-    const { data: defaultBusiness } = await admin
-      .from('businesses')
-      .select('id, name, location, phone, secondary_phone, primary_color, welcome_message, google_review_url')
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle()
-
-    business = defaultBusiness
-  }
-
-  // If owner has no business yet, show guided onboarding
   if (!business) {
     return <OnboardingWizard />
   }
 
   // 2. Fetch campaigns
-  const { data: campaigns } = await admin
-    .from('campaigns')
-    .select('id, name, slug, active, created_at')
-    .eq('business_id', business.id)
-    .order('created_at', { ascending: false })
+  const campaigns = await getCampaigns(business.id)
 
   // 3. Fetch all events for this business
-  const { data: events } = await admin
-    .from('events')
-    .select('session_id, campaign_id, event_type')
-    .eq('business_id', business.id)
+  const eventsSnap = await db
+    .collection('events')
+    .where('business_id', '==', business.id)
+    .get()
+  const events = eventsSnap.docs.map((d) => d.data())
 
   // 4. Fetch all sessions for this business
-  const { data: sessions } = await admin
-    .from('sessions')
-    .select('id, campaign_id, status, created_at, completed_at')
-    .eq('business_id', business.id)
-    .order('created_at', { ascending: false })
+  const sessionsSnap = await db
+    .collection('sessions')
+    .where('business_id', '==', business.id)
+    .get()
+  const sessions = sessionsSnap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as any) }))
+    .sort((a, b) => ((b.created_at || '') > (a.created_at || '') ? 1 : -1))
 
   // 5. Fetch all answers for this business's sessions
-  const sessionIds = (sessions || []).map((s) => s.id)
+  const sessionIds = sessions.map((s) => s.id)
   let answers: Array<{ session_id: string; question_key: string; value: any }> = []
   let drafts: Array<{ session_id: string; original_text: string | null; final_text: string | null }> = []
 
   if (sessionIds.length > 0) {
-    const { data: answersData } = await admin
-      .from('answers')
-      .select('session_id, question_key, value')
-      .in('session_id', sessionIds)
+    // Firestore in-query supports up to 30 items per batch. We can batch if needed.
+    const batches: string[][] = []
+    for (let i = 0; i < sessionIds.length; i += 30) {
+      batches.push(sessionIds.slice(i, i + 30))
+    }
 
-    answers = answersData || []
+    for (const batch of batches) {
+      const answersSnap = await db
+        .collection('answers')
+        .where('session_id', 'in', batch)
+        .get()
+      answers.push(...answersSnap.docs.map((d) => d.data() as any))
 
-    const { data: draftsData } = await admin
-      .from('review_drafts')
-      .select('session_id, original_text, final_text')
-      .in('session_id', sessionIds)
-
-    drafts = draftsData || []
+      const draftsSnap = await db
+        .collection('review_drafts')
+        .where('session_id', 'in', batch)
+        .get()
+      drafts.push(...draftsSnap.docs.map((d) => d.data() as any))
+    }
   }
 
   // 6. Fetch private feedback
-  const { data: privateFeedbackData } = await admin
-    .from('private_feedback')
-    .select('id, session_id, category, message, contact_name, contact_value, contact_consent, created_at')
-    .eq('business_id', business.id)
-    .order('created_at', { ascending: false })
+  const feedbackSnap = await db
+    .collection('private_feedback')
+    .where('business_id', '==', business.id)
+    .get()
+  const privateFeedbackData = feedbackSnap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as any) }))
+    .sort((a, b) => ((b.created_at || '') > (a.created_at || '') ? 1 : -1))
 
   // 7. Fetch menu items
-  const { data: menuItems } = await admin
-    .from('menu_items')
-    .select('id, name, active, position')
-    .eq('business_id', business.id)
-    .order('position', { ascending: true })
+  const menuItems = await getAllMenuItems(business.id)
 
   // Map menu item ID -> name
   const menuItemMap = new Map<string, string>()
-  for (const m of (menuItems || [])) {
+  for (const m of menuItems) {
     const rawName = m.name as any
     const dishName =
       typeof rawName === 'string'
@@ -150,7 +123,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const googleClickRate = completions > 0 ? googleClicks / completions : 0
 
   // Private feedback
-  const privateFeedbackCount = privateFeedbackData?.length || 0
+  const privateFeedbackCount = privateFeedbackData.length
   const privateFeedbackRate = completions > 0 ? privateFeedbackCount / completions : 0
 
   // Ratings calculation
@@ -285,7 +258,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       id: s.id,
       campaignName: cName,
       status: s.status,
-      completedAt: s.completed_at,
+      completedAt: s.completed_at || s.created_at,
       overallRating: sAnswers?.get('overall_rating') ?? null,
       foodRating: sAnswers?.get('food_rating') ?? null,
       serviceRating: sAnswers?.get('service_rating') ?? null,
@@ -305,7 +278,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     const cName = campaignMap.get(s.campaign_id)?.name || 'Dining Hall'
 
     const contactObj = sAnswers?.get('customer_contact')
-    const pf = (privateFeedbackData || []).find((f) => (f as any).session_id === s.id)
+    const pf = privateFeedbackData.find((f) => (f as any).session_id === s.id)
 
     const phoneVal =
       sAnswers?.get('customer_phone') ||
@@ -351,7 +324,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   })
 
   // Map private feedback
-  const feedbackList: PrivateFeedbackItem[] = (privateFeedbackData || []).map((f) => ({
+  const feedbackList: PrivateFeedbackItem[] = privateFeedbackData.map((f) => ({
     id: f.id,
     category: f.category,
     message: f.message,
@@ -367,20 +340,20 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       business={{
         id: business.id,
         name: business.name,
-        location: business.location,
-        phone: (business as any).phone || '6201699943',
-        secondaryPhone: (business as any).secondary_phone || '6201699943',
-        googleReviewUrl: business.google_review_url,
-        welcomeMessage: business.welcome_message,
-        primaryColor: business.primary_color,
+        location: business.location || null,
+        phone: business.phone || '6201699943',
+        secondaryPhone: business.secondary_phone || '6201699943',
+        googleReviewUrl: business.google_review_url || null,
+        welcomeMessage: business.welcome_message || null,
+        primaryColor: business.primary_color || '#d97706',
       }}
-      campaigns={campaigns || []}
+      campaigns={campaigns}
       analytics={analytics}
       responses={responses}
       customers={customerDetails}
       feedbackList={feedbackList}
-      menuItems={menuItems || []}
-      userEmail={user?.email || 'admin'}
+      menuItems={menuItems}
+      userEmail={user?.email || 'admin@residency.com'}
     />
   )
 }

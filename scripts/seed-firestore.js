@@ -1,0 +1,148 @@
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp } = require('firebase-admin/firestore');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+const saPath = path.resolve(__dirname, '../firebase-service-account.json');
+const sa = JSON.parse(fs.readFileSync(saPath, 'utf8'));
+
+const app = initializeApp({
+  credential: cert(sa),
+  projectId: sa.project_id || 'star-e7eb0',
+});
+
+const db = getFirestore(app);
+
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password + 'residence-inn-salt-2026').digest('hex');
+}
+
+async function seed() {
+  console.log('Seeding fresh Firestore database for Residence Inn (star-e7eb0)...');
+
+  const now = new Date().toISOString();
+
+  // 1. Business
+  const businessId = 'residence-inn';
+  await db.collection('businesses').doc(businessId).set({
+    id: businessId,
+    name: 'Residence Inn',
+    category: 'restaurant',
+    location: 'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
+    phone: '6201699943',
+    secondary_phone: '6201699943',
+    timezone: 'Asia/Kolkata',
+    primary_color: '#d97706',
+    welcome_message: {
+      en: 'Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943.',
+    },
+    google_review_url: 'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU',
+    owner_id: 'owner-residence-inn',
+    owner_email: 'admin@residency.com',
+    default_language: 'en',
+    created_at: now,
+    updated_at: now,
+  });
+  console.log('✅ Created business doc: residence-inn');
+
+  // 2. Campaigns
+  const campaigns = [
+    {
+      id: 'residence-inn',
+      business_id: businessId,
+      name: 'Table Stands - Dine-In QR',
+      slug: 'residence-inn',
+      active: true,
+      created_at: now,
+    },
+    {
+      id: 'pm-zaika',
+      business_id: businessId,
+      name: 'Residence Inn - Table Stand QR',
+      slug: 'pm-zaika',
+      active: true,
+      created_at: now,
+    },
+    {
+      id: 'patna-dining',
+      business_id: businessId,
+      name: 'Main Dining Hall Stand',
+      slug: 'patna-dining',
+      active: true,
+      created_at: now,
+    },
+  ];
+
+  for (const c of campaigns) {
+    await db.collection('campaigns').doc(c.id).set(c);
+  }
+  console.log('✅ Created campaigns: residence-inn, pm-zaika, patna-dining');
+
+  // 3. Menu Items
+  const menuItems = [
+    { id: 'item-1', business_id: businessId, name: { en: 'Residence Inn Special Biryani' }, position: 1, active: true },
+    { id: 'item-2', business_id: businessId, name: { en: 'Chicken Dum Biryani' }, position: 2, active: true },
+    { id: 'item-3', business_id: businessId, name: { en: 'Mutton Handi Special' }, position: 3, active: true },
+    { id: 'item-4', business_id: businessId, name: { en: 'Chicken Tikka Butter Masala' }, position: 4, active: true },
+    { id: 'item-5', business_id: businessId, name: { en: 'Paneer Butter Masala' }, position: 5, active: true },
+    { id: 'item-6', business_id: businessId, name: { en: 'Dal Makhani Delight' }, position: 6, active: true },
+    { id: 'item-7', business_id: businessId, name: { en: 'Special Fried Rice' }, position: 7, active: true },
+    { id: 'item-8', business_id: businessId, name: { en: 'Butter Naan & Rumali Roti' }, position: 8, active: true },
+    { id: 'item-9', business_id: businessId, name: { en: 'Gulab Jamun with Ice Cream' }, position: 9, active: true },
+  ];
+
+  for (const m of menuItems) {
+    await db.collection('menu_items').doc(m.id).set(m);
+  }
+  console.log('✅ Created 9 menu items');
+
+  // 4. Questions
+  const questions = [
+    { id: 'q-overall', business_id: businessId, key: 'overall_rating', type: 'rating', text: { en: 'Overall Experience' }, position: 1 },
+    { id: 'q-food', business_id: businessId, key: 'food_rating', type: 'rating', text: { en: 'Food & Flavors' }, position: 2 },
+    { id: 'q-service', business_id: businessId, key: 'service_rating', type: 'rating', text: { en: 'Hospitality & Service' }, position: 3 },
+    { id: 'q-liked', business_id: businessId, key: 'liked', type: 'multi_choice', text: { en: 'What did you like most?' }, position: 4 },
+    { id: 'q-ordered', business_id: businessId, key: 'ordered', type: 'multi_choice', text: { en: 'Dishes ordered today' }, position: 5 },
+    { id: 'q-contact', business_id: businessId, key: 'customer_contact', type: 'text', text: { en: 'Contact Details' }, position: 6 },
+  ];
+
+  for (const q of questions) {
+    await db.collection('questions').doc(q.id).set(q);
+  }
+  console.log('✅ Created 6 default questions');
+
+  // 5. Admin Users for dashboard authentication
+  const adminUsers = [
+    {
+      id: 'admin-residency',
+      email: 'admin@residency.com',
+      username: 'admin',
+      password_hash: hashPassword('password123'),
+      role: 'owner',
+      business_id: businessId,
+      created_at: now,
+    },
+    {
+      id: 'owner-residency',
+      email: 'owner@residency.com',
+      username: 'owner',
+      password_hash: hashPassword('password123'),
+      role: 'owner',
+      business_id: businessId,
+      created_at: now,
+    },
+  ];
+
+  for (const u of adminUsers) {
+    await db.collection('users').doc(u.id).set(u);
+  }
+  console.log('✅ Created admin users in Firestore: admin@residency.com (password123)');
+
+  console.log('\n🎉 Fresh Firestore database seeded successfully without any prior responses!');
+}
+
+seed().catch(err => {
+  console.error('Seed error:', err);
+  process.exit(1);
+});
