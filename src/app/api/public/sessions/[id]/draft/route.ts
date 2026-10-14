@@ -26,9 +26,13 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
-    // 2. Idempotency: Return existing draft if already generated in Firestore
+    const body = await request.json().catch(() => ({}))
+    const isRegenerate = body?.regenerate === true || request.nextUrl.searchParams.get('regenerate') === 'true'
+
+    // 2. Idempotency: Return existing draft if already generated in Firestore (unless regenerate requested)
     const existingDraftDoc = await db.collection('review_drafts').doc(id).get()
-    if (existingDraftDoc.exists) {
+    const previousText = existingDraftDoc.exists ? existingDraftDoc.data()?.original_text : undefined
+    if (!isRegenerate && existingDraftDoc.exists) {
       const data = existingDraftDoc.data()
       if (data?.original_text) {
         return NextResponse.json(data, { status: 200 })
@@ -50,8 +54,11 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     const biz = await getBusiness(session.business_id)
     const restaurantName = biz?.name || 'Residence Inn'
 
-    // 4. Generate review draft
-    const generated = await generateReviewDraft(factSheet, id, restaurantName)
+    // 4. Generate review draft (with dynamic entropy and anti-repetition previousText)
+    const generated = await generateReviewDraft(factSheet, id, restaurantName, {
+      salt: Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 6),
+      previousText,
+    })
 
     const now = new Date().toISOString()
     const draftRecord = {
@@ -60,7 +67,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
       original_text: generated.text,
       final_text: generated.text,
       method: generated.method,
-      created_at: now,
+      created_at: existingDraftDoc.data()?.created_at || now,
       updated_at: now,
     }
 

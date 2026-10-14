@@ -25,6 +25,7 @@ export default function ReviewDraftCard({
 }: ReviewDraftCardProps) {
   const [draft, setDraft] = useState(initialDraftText)
   const [isLoadingDraft, setIsLoadingDraft] = useState(!initialDraftText)
+  const [isRegenerating, setIsRegenerating] = useState(false)
   const [hasCopied, setHasCopied] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -52,6 +53,32 @@ export default function ReviewDraftCard({
         .finally(() => setIsLoadingDraft(false))
     }
   }, [sessionId, draft, restaurantName])
+
+  // Regenerate a fresh, unique review draft
+  const handleRegenerateReview = async () => {
+    if (isRegenerating || isLoadingDraft) return
+    setIsRegenerating(true)
+    try {
+      const res = await fetch(`/api/public/sessions/${sessionId}/draft?regenerate=true`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ regenerate: true }),
+      })
+      const data = await res.json()
+      if (data?.final_text || data?.original_text) {
+        setDraft(data.final_text || data.original_text)
+        setHasCopied(false)
+        setIsCopied(false)
+        setToastMessage('✨ Generated a fresh, unique review!')
+        setTimeout(() => setToastMessage(null), 3000)
+      }
+    } catch (err) {
+      console.warn('Failed to regenerate review:', err)
+    } finally {
+      setIsRegenerating(false)
+    }
+  }
 
   // Copy text helper
   const copyToClipboard = async () => {
@@ -146,6 +173,29 @@ export default function ReviewDraftCard({
             <p className="text-[11px] text-stone-400 text-center">
               🔒 This review is uneditable to preserve authentic ratings
             </p>
+
+            {/* Shuffle / Regenerate another wording */}
+            <div className="flex justify-center pt-0.5">
+              <button
+                type="button"
+                onClick={handleRegenerateReview}
+                disabled={isRegenerating || isLoadingDraft}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100/90 active:scale-95 border border-amber-200/90 text-amber-900 text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                title="Click to generate a different review draft"
+              >
+                {isRegenerating ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
+                    <span>Writing unique variation...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Try another wording (Different Review)</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         )}
 
