@@ -16,10 +16,16 @@ export const revalidate = 0
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const { tab } = await searchParams
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.getUser()
+    if (!error && data?.user) {
+      user = data.user
+    }
+  } catch {
+    user = null
+  }
 
   const admin = createAdminClient()
 

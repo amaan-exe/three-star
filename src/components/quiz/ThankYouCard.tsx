@@ -86,7 +86,7 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
           {/* Secondary Buttons Row */}
           <div className="grid grid-cols-2 gap-2">
             <a
-              href="https://www.google.com/maps/place/?q=place_id:ChIJ52esmZNf7TkRoznWIQnz7uo"
+              href="https://www.google.com/maps/place/?q=place_id:ChIJkaqpBNhX7TkRe6PNrOcTDZU"
               target="_blank"
               rel="noopener noreferrer"
               className="h-11 px-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/90 text-stone-700 hover:text-stone-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"

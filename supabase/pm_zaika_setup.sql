@@ -298,7 +298,7 @@ BEGIN
       phone = '6201699943',
       secondary_phone = '6201699943',
       welcome_message = '{"en": "Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943."}'::jsonb,
-      google_review_url = 'https://search.google.com/local/writereview?placeid=ChIJ52esmZNf7TkRoznWIQnz7uo',
+      google_review_url = 'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU',
       updated_at = now()
     WHERE id = v_business_id;
   END IF;
