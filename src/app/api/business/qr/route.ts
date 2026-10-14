@@ -11,8 +11,22 @@ export async function GET(request: NextRequest) {
   }
 
   const proto = request.headers.get('x-forwarded-proto') || (process.env.NODE_ENV === 'production' ? 'https' : 'http')
-  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || process.env.APP_DOMAIN || 'localhost:3000'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host')
+
+  // Dynamic origin resolution with fallback to production hotel domain
+  let baseUrl = ''
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.includes('pmzaika')) {
+    baseUrl = `${proto}://${host}`
+  } else if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('pmzaika')) {
+    baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  } else if (process.env.APP_DOMAIN && !process.env.APP_DOMAIN.includes('pmzaika')) {
+    baseUrl = `https://${process.env.APP_DOMAIN}`
+  } else if (host && !host.includes('pmzaika')) {
+    baseUrl = `${proto}://${host}`
+  } else {
+    baseUrl = 'https://three-star-ebon.vercel.app'
+  }
+
   const targetUrl = `${baseUrl.replace(/\/$/, '')}/r/${slug}`
 
   try {
@@ -30,8 +44,9 @@ export async function GET(request: NextRequest) {
       return new NextResponse(svgString, {
         headers: {
           'Content-Type': 'image/svg+xml',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
           ...(isDownload
-            ? { 'Content-Disposition': `attachment; filename="reviewpulse-qr-${slug}.svg"` }
+            ? { 'Content-Disposition': `attachment; filename="residence-inn-qr-${slug}.svg"` }
             : {}),
         },
       })
@@ -52,9 +67,9 @@ export async function GET(request: NextRequest) {
     return new NextResponse(new Uint8Array(pngBuffer), {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000, immutable',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         ...(isDownload
-          ? { 'Content-Disposition': `attachment; filename="reviewpulse-qr-${slug}.png"` }
+          ? { 'Content-Disposition': `attachment; filename="residence-inn-qr-${slug}.png"` }
           : {}),
       },
     })

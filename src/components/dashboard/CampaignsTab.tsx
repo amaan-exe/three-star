@@ -203,7 +203,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
               <div className="p-4 rounded-2xl bg-white flex items-center justify-center mx-auto max-w-[200px] shadow-md border border-stone-200">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`/api/business/qr?slug=${camp.slug}&format=png`}
+                  src={`/api/business/qr?slug=${camp.slug}&format=png&v=3`}
                   alt={`QR for ${camp.name}`}
                   className="w-36 h-36 object-contain"
                 />
@@ -226,8 +226,8 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
 
                 <div className="grid grid-cols-2 gap-2">
                   <a
-                    href={`/api/business/qr?slug=${camp.slug}&format=png&download=true`}
-                    download={`reviewpulse-qr-${camp.slug}.png`}
+                    href={`/api/business/qr?slug=${camp.slug}&format=png&download=true&v=3`}
+                    download={`residence-inn-qr-${camp.slug}.png`}
                     className="h-10 px-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors active:scale-[0.98]"
                   >
                     <Download className="w-3.5 h-3.5 text-amber-400" />
@@ -235,8 +235,8 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
                   </a>
 
                   <a
-                    href={`/api/business/qr?slug=${camp.slug}&format=svg&download=true`}
-                    download={`reviewpulse-qr-${camp.slug}.svg`}
+                    href={`/api/business/qr?slug=${camp.slug}&format=svg&download=true&v=3`}
+                    download={`residence-inn-qr-${camp.slug}.svg`}
                     className="h-10 px-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors active:scale-[0.98]"
                   >
                     <Download className="w-3.5 h-3.5 text-yellow-400" />

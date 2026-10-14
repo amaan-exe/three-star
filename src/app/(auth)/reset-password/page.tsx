@@ -201,12 +201,12 @@ function ResetPasswordForm() {
             <div className="space-y-1.5">
               <Label htmlFor="resend-user" className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-amber-500" />
-                Restaurant Username or Email
+                Hotel Username or Email
               </Label>
               <Input
                 id="resend-user"
                 type="text"
-                placeholder="admin or owner@pmzaika.com"
+                placeholder="admin or admin@residency.com"
                 value={resendUsername}
                 onChange={(e) => setResendUsername(e.target.value)}
                 required

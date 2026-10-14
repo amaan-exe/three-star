@@ -127,7 +127,7 @@ async function run() {
   console.log('------------------------------------------------------')
   console.log('You can now log in at:')
   console.log('  Local:      http://localhost:3000/login')
-  console.log('  Production: https://pmzaikaqr.vercel.app/login')
+  console.log('  Production: https://three-star-ebon.vercel.app/login')
   console.log('  Username:   admin (or ' + user.email + ')\n')
 }
 
