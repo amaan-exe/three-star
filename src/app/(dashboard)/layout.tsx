@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getAdminSession, clearAdminSessionCookie } from '@/lib/firebase/auth'
 import Link from 'next/link'
-import { Sparkles, LayoutDashboard, QrCode, MessageSquare, Utensils, Settings, LogOut, Users } from 'lucide-react'
+import { Sparkles, LayoutDashboard, QrCode, MessageSquare, Utensils, BedDouble, Settings, LogOut, Users } from 'lucide-react'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const sessionUser = await getAdminSession()
@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-base text-white tracking-tight leading-tight">Residence Inn</span>
-                <span className="text-[10px] text-amber-400 font-semibold leading-none">ReviewPulse Portal • Patna</span>
+                <span className="text-[10px] text-amber-400 font-semibold leading-none">Hotel Portal • Patna</span>
               </div>
             </Link>
 
@@ -65,8 +65,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 href="/dashboard?tab=menu"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-medium transition-colors"
               >
-                <Utensils className="w-4 h-4 text-emerald-400" />
-                Menu
+                <BedDouble className="w-4 h-4 text-emerald-400" />
+                Rooms &amp; Services
               </Link>
               <Link
                 href="/dashboard?tab=settings"

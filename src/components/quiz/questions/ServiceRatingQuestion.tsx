@@ -13,8 +13,8 @@ interface ServiceRatingQuestionProps {
 const SERVICE_OPTIONS = [
   {
     rating: 1,
-    label: 'Poor',
-    desc: 'Slow, inattentive, or unhelpful',
+    label: 'Needs Attention',
+    desc: 'Slow check-in, inattentive, or unhelpful',
     icon: Frown,
     activeBorder: 'border-rose-400',
     activeBg: 'bg-rose-50',
@@ -27,7 +27,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 2,
     label: 'Fair',
-    desc: 'Could be friendlier or faster',
+    desc: 'Could be friendlier or more responsive',
     icon: Meh,
     activeBorder: 'border-amber-400',
     activeBg: 'bg-amber-50',
@@ -40,7 +40,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 3,
     label: 'Good',
-    desc: 'Attentive & met expectations',
+    desc: 'Helpful & met stay expectations',
     icon: Smile,
     activeBorder: 'border-stone-400',
     activeBg: 'bg-stone-100',
@@ -53,7 +53,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 4,
     label: 'Very Good',
-    desc: 'Warm, attentive, and helpful',
+    desc: 'Warm, courteous, and prompt staff',
     icon: Heart,
     activeBorder: 'border-emerald-400',
     activeBg: 'bg-emerald-50',
@@ -65,8 +65,8 @@ const SERVICE_OPTIONS = [
   },
   {
     rating: 5,
-    label: 'Royal & Excellent',
-    desc: 'Outstanding hospitality & care',
+    label: 'Royal & Outstanding',
+    desc: 'Exceptional hospitality & 24/7 care',
     icon: Crown,
     activeBorder: 'border-amber-500',
     activeBg: 'bg-gradient-to-r from-amber-50 via-amber-100/40 to-amber-50',
@@ -92,7 +92,7 @@ export default function ServiceRatingQuestion({
       setAttemptedRating(rating)
       setShowLowRatingModal(true)
       setWarningMessage(
-        `At ${restaurantName}, ratings below 4 stars cannot be accepted. Please choose Very Good (4) or Royal & Excellent (5) to continue.`
+        `At ${restaurantName}, service ratings below 4 stars cannot be accepted. Please choose Very Good (4) or Royal & Outstanding (5) to continue.`
       )
       return
     }
@@ -140,12 +140,12 @@ export default function ServiceRatingQuestion({
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
           How was the{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            hospitality &amp; service
+            hospitality &amp; staff
           </span>
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Staff friendliness, attentiveness, and order speed (4 or 5 stars required)
+          Front desk, check-in speed, room service, &amp; staff courtesy (4 or 5 stars required)
         </p>
       </div>
 

@@ -11,11 +11,11 @@ interface EmojiRatingQuestionProps {
 }
 
 const EMOJI_OPTIONS = [
-  { rating: 1, emoji: '😞', label: 'Bad' },
+  { rating: 1, emoji: '😞', label: 'Needs Care' },
   { rating: 2, emoji: '😕', label: 'Fair' },
-  { rating: 3, emoji: '😐', label: 'Okay' },
-  { rating: 4, emoji: '🙂', label: 'Good' },
-  { rating: 5, emoji: '😍', label: 'Amazing!' },
+  { rating: 3, emoji: '😐', label: 'Average' },
+  { rating: 4, emoji: '🙂', label: 'Comfortable' },
+  { rating: 5, emoji: '😍', label: 'Luxurious!' },
 ]
 
 export default function EmojiRatingQuestion({
@@ -32,7 +32,7 @@ export default function EmojiRatingQuestion({
       setAttemptedRating(rating)
       setShowLowRatingModal(true)
       setWarningMessage(
-        `At ${restaurantName}, ratings below 4 stars cannot be accepted. Please choose Good (4) or Amazing! (5) to continue.`
+        `At ${restaurantName}, room ratings below 4 stars cannot be accepted. Please choose Comfortable (4) or Luxurious! (5) to continue.`
       )
       return
     }
@@ -78,21 +78,21 @@ export default function EmojiRatingQuestion({
           <span className="text-[11px] text-amber-800 font-medium">Required</span>
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-          How did you find the{' '}
+          How was your{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            food &amp; flavors
+            room comfort &amp; cleanliness
           </span>
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Taste, aroma, spices, and tenderness (4 or 5 stars required)
+          Cleanliness, bed comfort, quiet ambiance, &amp; amenities (4 or 5 stars required)
         </p>
       </div>
 
       {/* 5 Emoji Face Buttons */}
       <div
         role="radiogroup"
-        aria-label="Food and drink rating"
+        aria-label="Room comfort and cleanliness rating"
         className="py-4 sm:py-6 flex items-center justify-center gap-1 sm:gap-3.5 flex-nowrap overflow-x-auto no-scrollbar"
       >
         {EMOJI_OPTIONS.map((opt) => {

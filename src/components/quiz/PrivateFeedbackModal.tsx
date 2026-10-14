@@ -12,11 +12,12 @@ interface PrivateFeedbackModalProps {
 }
 
 const CATEGORIES = [
-  { key: 'food', label: 'Food quality' },
-  { key: 'service', label: 'Hospitality / Service' },
-  { key: 'waiting_time', label: 'Waiting time' },
-  { key: 'cleanliness', label: 'Cleanliness' },
-  { key: 'billing', label: 'Billing / Price' },
+  { key: 'room_comfort', label: 'Room Comfort & AC' },
+  { key: 'cleanliness', label: 'Cleanliness & Housekeeping' },
+  { key: 'service', label: 'Front Desk / Staff Hospitality' },
+  { key: 'checkin', label: 'Check-in / Check-out' },
+  { key: 'amenities', label: 'Wi-Fi & Amenities' },
+  { key: 'dining', label: 'Food & Room Service' },
   { key: 'other', label: 'Other' },
 ]
 
@@ -26,7 +27,7 @@ export default function PrivateFeedbackModal({
   sessionId,
   restaurantName,
 }: PrivateFeedbackModalProps) {
-  const [category, setCategory] = useState<string>('food')
+  const [category, setCategory] = useState<string>('room_comfort')
   const [message, setMessage] = useState('')
   const [contactName, setContactName] = useState('')
   const [contactValue, setContactValue] = useState('')

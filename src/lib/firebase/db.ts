@@ -129,7 +129,7 @@ export async function getBusiness(businessId = 'residence-inn'): Promise<Busines
   const defaultBiz: BusinessDoc = {
     id: 'residence-inn',
     name: 'Residence Inn',
-    category: 'restaurant',
+    category: 'hotel',
     location:
       'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
     phone: '6201699943',
@@ -137,7 +137,7 @@ export async function getBusiness(businessId = 'residence-inn'): Promise<Busines
     timezone: 'Asia/Kolkata',
     primary_color: '#d97706',
     welcome_message: {
-      en: 'Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943.',
+      en: 'Welcome to Residence Inn! Share your honest hotel stay experience with us in 30 seconds. For reception & room service call 6201699943.',
     },
     google_review_url:
       'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU',

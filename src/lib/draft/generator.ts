@@ -8,57 +8,59 @@ export interface GenerationResult {
 }
 
 /**
- * Deterministic sentence banks seeded by session_id to satisfy CG-7 (anti-repetition).
+ * Deterministic sentence banks seeded by session_id to satisfy CG-7 (anti-repetition) for hotel stays.
  */
 const OVERALL_POSITIVE = [
-  'Had a really pleasant visit here today.',
-  'Really enjoyed my dining experience at this place.',
-  'Had a great time visiting today.',
-  'Wonderful experience dining here today.',
+  'Had a truly wonderful and comfortable stay here.',
+  'Really enjoyed my stay at Residence Inn in Patna.',
+  'Had a pleasant, relaxing, and hassle-free stay.',
+  'Wonderful hotel experience with peaceful ambience and great comfort.',
 ]
 
 const OVERALL_NEUTRAL = [
-  'Visited here today for a meal.',
-  'Stopped by for dining today.',
-  'An okay visit overall today.',
+  'Stayed here recently during my visit to Patna.',
+  'A decent and standard hotel stay overall.',
+  'Spent a night here; the overall experience was satisfactory.',
 ]
 
 const OVERALL_NEGATIVE = [
-  'Visited here today, but the visit was disappointing.',
-  'Dined here today, though the overall visit fell short.',
-  'Stopped by today, but my experience was not as expected.',
+  'Stayed here recently, but the experience fell short of expectations.',
+  'Visited this hotel, though certain aspects of the stay could be improved.',
+  'Our stay here did not meet our initial expectations.',
 ]
 
 const FOOD_POSITIVE = [
-  'The food was very flavorful and fresh.',
-  'Really enjoyed the flavors and quality of the dishes.',
-  'The dishes were prepared well and tasted good.',
+  'The room was spotless, spacious, and very comfortable.',
+  'Loved the cozy bedding, fresh linens, and peaceful room atmosphere.',
+  'The room cleanliness and modern amenities were top notch.',
+  'The room was well-maintained with excellent AC and clean bathroom.',
 ]
 
 const FOOD_NEUTRAL = [
-  'The food was acceptable and decent.',
-  'The meal was okay and met standard expectations.',
+  'The room comfort was standard and reasonably maintained.',
+  'The room and amenities were adequate for a short stay.',
 ]
 
 const FOOD_NEGATIVE = [
-  'The food was lacking flavor and did not meet expectations.',
-  'The dishes served were disappointing in taste.',
+  'The room cleanliness and maintenance could have been better.',
+  'The room amenities and bedding needed more attention.',
 ]
 
 const SERVICE_POSITIVE = [
-  'The staff was polite and attentive throughout.',
-  'Service was friendly and promptly delivered.',
-  'The hospitality was warm and accommodating.',
+  'The front desk and housekeeping staff were warm, polite, and very helpful.',
+  'Hospitality was exceptional with prompt assistance and swift check-in.',
+  'The hotel team was courteous and attentive to all our requests.',
+  'Remarkable service from the staff throughout our entire stay.',
 ]
 
 const SERVICE_NEUTRAL = [
-  'Service was standard and adequate.',
-  'Staff attended to our table without delay.',
+  'The front desk and staff service were standard and adequate.',
+  'Check-in and room assistance were handled without major delay.',
 ]
 
 const SERVICE_NEGATIVE = [
-  'The service was quite slow and needed more attention.',
-  'Staff could have been more attentive and responsive.',
+  'Staff responsiveness and room service were quite slow.',
+  'Front desk service could be more welcoming and attentive.',
 ]
 
 function getSeededIndex(seed: string, length: number): number {
@@ -83,7 +85,7 @@ export function generateDeterministicDraft(factSheet: FactSheet, sessionId: stri
     sentences.push(OVERALL_NEGATIVE[getSeededIndex(sessionId + '-ov', OVERALL_NEGATIVE.length)])
   }
 
-  // 2. Food Sentence
+  // 2. Room & Cleanliness Sentence (mapped to food question key)
   const foodTone = factSheet.food?.tone || 'positive'
   if (foodTone === 'positive') {
     sentences.push(FOOD_POSITIVE[getSeededIndex(sessionId + '-fd', FOOD_POSITIVE.length)])
@@ -93,16 +95,16 @@ export function generateDeterministicDraft(factSheet: FactSheet, sessionId: stri
     sentences.push(FOOD_NEGATIVE[getSeededIndex(sessionId + '-fd', FOOD_NEGATIVE.length)])
   }
 
-  // 3. Dishes ordered or compliments liked
+  // 3. Room type / amenities enjoyed or compliments liked
   if (factSheet.ordered.length > 0 && foodTone === 'positive') {
-    const dishes = factSheet.ordered.slice(0, 2).join(' and ')
-    sentences.push(`The ${dishes} stood out during our meal.`)
+    const amenities = factSheet.ordered.slice(0, 2).join(' and ')
+    sentences.push(`We especially enjoyed the ${amenities}.`)
   } else if (factSheet.liked.length > 0 && overallTone === 'positive') {
     const aspects = factSheet.liked.slice(0, 2).join(' and ')
-    sentences.push(`We especially appreciated the ${aspects}.`)
+    sentences.push(`The ${aspects} made our stay even better.`)
   }
 
-  // 4. Service Sentence
+  // 4. Hospitality & Staff Service Sentence
   const serviceTone = factSheet.service?.tone || 'positive'
   if (serviceTone === 'positive') {
     sentences.push(SERVICE_POSITIVE[getSeededIndex(sessionId + '-sv', SERVICE_POSITIVE.length)])
@@ -132,15 +134,16 @@ export async function generateReviewDraft(
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-      const prompt = `You are helping a restaurant customer write a brief, authentic review draft for ${restaurantName}.
+      const prompt = `You are helping a hotel guest write a brief, authentic Google review draft for their stay at ${restaurantName}.
 STRICT RULES:
-1. Write in the first person ("I" / "We").
+1. Write in the first person ("I" / "We") as a guest who stayed at this hotel.
 2. Length MUST be between 30 and 70 words.
-3. Use ONLY facts from this Fact Sheet:
+3. Mention hotel highlights like comfortable & clean rooms, courteous staff, peaceful stay, and amenities.
+4. Use ONLY facts from this Fact Sheet:
 ${JSON.stringify(factSheet, null, 2)}
-4. Preserve sentiment: negative ratings MUST sound polite but dissatisfied; positive ratings must sound pleased.
-5. Do NOT include staff names, prices, promotional offers, discounts, star ratings (e.g. "5 stars"), URLs, or hashtags.
-6. Return plain text only without markdown formatting or quotation marks.`
+5. Preserve sentiment: negative ratings MUST sound polite but dissatisfied; positive ratings must sound pleased.
+6. Do NOT include staff names, prices, promotional offers, discounts, star ratings (e.g. "5 stars"), URLs, or hashtags.
+7. Return plain text only without markdown formatting or quotation marks.`
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',

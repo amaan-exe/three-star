@@ -28,7 +28,7 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           </div>
           <h1 className="text-xl font-bold text-stone-900">QR Code Not Found</h1>
           <p className="text-sm text-stone-500">
-            This QR code is not valid or has been removed. Please ask your server at Residence Inn for assistance.
+            This QR code is not valid or has been removed. Please ask the front desk at Residence Inn for assistance.
           </p>
           <div className="pt-2">
             <a
@@ -107,7 +107,7 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
   const restaurantName = business?.name ?? 'Residence Inn'
   const welcomeText =
     (business?.welcome_message?.en as string | undefined) ??
-    'Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For direct helpline & orders call 6201699943.'
+    'Welcome to Residence Inn! Share your honest hotel stay experience with us in 30 seconds. For reception & room service call 6201699943.'
 
   return (
     <div className="min-h-screen min-h-[100dvh] min-h-safe-screen bg-[#faf8f5] bg-gradient-to-b from-[#fdfbf7] via-[#fbf7ee] to-[#f6efe0] text-stone-900 flex flex-col justify-between px-3 sm:px-6 pt-safe pb-safe py-3 sm:py-6 selection:bg-amber-600 selection:text-white relative overflow-x-hidden font-sans">

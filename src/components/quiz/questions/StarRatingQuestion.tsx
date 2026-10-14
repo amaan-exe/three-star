@@ -11,11 +11,11 @@ interface StarRatingQuestionProps {
 }
 
 const RATING_LABELS: Record<number, string> = {
-  1: 'Disappointing experience',
+  1: 'Disappointing stay',
   2: 'Could have been better',
-  3: 'Good / Average',
-  4: 'Very good!',
-  5: 'Outstanding experience!',
+  3: 'Decent stay',
+  4: 'Very comfortable & relaxing!',
+  5: 'Outstanding hotel experience!',
 }
 
 export default function StarRatingQuestion({
@@ -84,12 +84,12 @@ export default function StarRatingQuestion({
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
           How was your{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            overall experience
+            overall stay
           </span>{' '}
-          today?
+          at Residence Inn?
         </h2>
         <p className="text-sm text-stone-600">
-          Tap a star to rate your visit (4 or 5 stars required)
+          Tap a star to rate your hotel experience (4 or 5 stars required)
         </p>
       </div>
 

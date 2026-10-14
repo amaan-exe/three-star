@@ -425,7 +425,7 @@ export default function QuizFlow({
               </button>
 
               <p className="text-[11px] text-stone-400">
-                Your authentic feedback helps the chef and team serve you better.
+                Your authentic feedback helps the hotel staff and housekeeping serve you better.
               </p>
             </div>
           </div>

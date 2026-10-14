@@ -18,6 +18,7 @@ import {
   MessageSquare,
   MessageSquareHeart,
   Utensils,
+  BedDouble,
   Settings,
   Sparkles,
   Users,
@@ -103,13 +104,13 @@ export default function DashboardWorkspace({
       icon: MessageSquareHeart,
       badge: feedbackList.length > 0 ? feedbackList.length : undefined,
     },
-    { key: 'menu', label: 'Menu', icon: Utensils, badge: menuItems.length },
+    { key: 'menu', label: 'Rooms & Services', icon: BedDouble, badge: menuItems.length },
     { key: 'settings', label: 'Settings', icon: Settings },
   ]
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-safe-nav md:pb-6">
-      {/* Restaurant Header */}
+      {/* Hotel Header */}
       <div className="space-y-3 pb-3 border-b border-slate-800/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="space-y-0.5">
@@ -122,7 +123,7 @@ export default function DashboardWorkspace({
               </span>
             </div>
             <p className="text-xs text-slate-400 truncate max-w-xl">
-              {business.location ? `${business.location} • ` : ''}Restaurant Management &amp; Analytics
+              {business.location ? `${business.location} • ` : ''}Hotel Guest Experience &amp; Analytics
             </p>
           </div>
 

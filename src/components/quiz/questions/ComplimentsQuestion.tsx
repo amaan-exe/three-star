@@ -1,6 +1,6 @@
 'use client'
 
-import { Utensils, HeartHandshake, Sparkles, Scale, Eye, BadgePercent, Check } from 'lucide-react'
+import { HeartHandshake, Sparkles, Bed, MapPin, BellRing, BadgePercent, Check } from 'lucide-react'
 
 interface ComplimentsQuestionProps {
   value: string[]
@@ -8,12 +8,12 @@ interface ComplimentsQuestionProps {
 }
 
 const COMPLIMENT_OPTIONS = [
-  { key: 'food', label: 'Authentic Flavour', icon: Utensils, desc: 'Rich Dum spices & tender meat' },
-  { key: 'service', label: 'Warm Hospitality', icon: HeartHandshake, desc: 'Polite, attentive staff' },
-  { key: 'ambience', label: 'Pleasant Ambience', icon: Sparkles, desc: 'Clean, comfortable dining hall' },
-  { key: 'portion_size', label: 'Generous Portions', icon: Scale, desc: 'Filling & satisfying quantity' },
-  { key: 'presentation', label: 'Clay Handi Plating', icon: Eye, desc: 'Aromatic & beautifully served' },
-  { key: 'value', label: 'Great Value (₹200-400)', icon: BadgePercent, desc: 'Worth every rupee spent' },
+  { key: 'cleanliness', label: 'Spotless Cleanliness', icon: Sparkles, desc: 'Fresh linens, sanitised room & bathroom' },
+  { key: 'hospitality', label: 'Courteous Front Desk', icon: HeartHandshake, desc: 'Warm welcome & smooth check-in/out' },
+  { key: 'comfort', label: 'Comfortable Bed & AC', icon: Bed, desc: 'Peaceful sleep & modern amenities' },
+  { key: 'location', label: 'Prime Location', icon: MapPin, desc: 'Near P&M Mall & Patliputra zone' },
+  { key: 'room_service', label: 'Prompt Room Service', icon: BellRing, desc: 'Fast assistance & helpful housekeeping' },
+  { key: 'value', label: 'Great Value Stay', icon: BadgePercent, desc: 'Luxury comfort at a fair tariff' },
 ]
 
 export default function ComplimentsQuestion({ value, onChange }: ComplimentsQuestionProps) {
@@ -44,7 +44,7 @@ export default function ComplimentsQuestion({ value, onChange }: ComplimentsQues
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Select highlights that stood out during your visit
+          Select highlights that stood out during your stay at Residence Inn
         </p>
       </div>
 

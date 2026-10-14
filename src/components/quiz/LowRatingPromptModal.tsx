@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Star, Sparkles, HeartHandshake, ShieldAlert, ArrowRight, X, Utensils, Heart } from 'lucide-react'
+import { Star, Bed, Sparkles, HeartHandshake, ShieldAlert, ArrowRight, X, Crown, Heart } from 'lucide-react'
 
 export type RatingCategory = 'overall' | 'food' | 'service'
 
@@ -35,37 +35,37 @@ export default function LowRatingPromptModal({
   // Content configurations based on category
   const config = {
     food: {
-      tag: 'Culinary Perfection Commitment',
-      title: 'We Strive For Culinary Excellence!',
-      icon: Utensils,
-      body: `At ${restaurantName}, our master chefs take immense pride in crafting rich aromas, tender dishes, and authentic Indian flavors.`,
-      notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. Ratings below 4 stars cannot be accepted. Kindly consider rating our food 4 or 5 stars so our culinary team can continue delighting you!`,
-      option5Title: '😍 Amazing! (5 Stars)',
-      option5Sub: 'Superb taste, spices & aroma!',
-      option4Title: '🙂 Good (4 Stars)',
-      option4Sub: 'Delicious meal & satisfied flavors',
+      tag: 'Room Comfort & Cleanliness Commitment',
+      title: 'We Strive For 5-Star Comfort & Cleanliness!',
+      icon: Bed,
+      body: `At ${restaurantName}, our housekeeping team takes immense pride in maintaining pristine rooms, fresh bedding, and peaceful comfort for every guest.`,
+      notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. Ratings below 4 stars cannot be accepted. Kindly consider rating our room comfort 4 or 5 stars so our housekeeping team is recognized!`,
+      option5Title: '😍 Luxurious! (5 Stars)',
+      option5Sub: 'Pristine room, cozy bed & peaceful sleep!',
+      option4Title: '🙂 Comfortable (4 Stars)',
+      option4Sub: 'Clean, pleasant & relaxing stay',
     },
     service: {
-      tag: 'Royal Hospitality Commitment',
+      tag: 'Hotel Hospitality Commitment',
       title: 'We Strive For Royal Hospitality!',
-      icon: Heart,
-      body: `At ${restaurantName}, our team is dedicated to providing warm, prompt, and courteous hospitality to every guest.`,
+      icon: Crown,
+      body: `At ${restaurantName}, our front desk, concierge, and room service staff are dedicated to providing warm, prompt, and courteous hospitality 24/7.`,
       notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. Ratings below 4 stars cannot be accepted. Kindly rate our hospitality 4 or 5 stars so our service staff is celebrated for their hard work!`,
-      option5Title: '👑 Royal & Excellent (5 Stars)',
-      option5Sub: 'Outstanding hospitality, warmth & care!',
+      option5Title: '👑 Royal & Outstanding (5 Stars)',
+      option5Sub: 'Outstanding hospitality, warmth & 24/7 care!',
       option4Title: '❤️ Very Good (4 Stars)',
-      option4Sub: 'Warm, attentive, and helpful staff',
+      option4Sub: 'Warm, courteous, and prompt staff',
     },
     overall: {
-      tag: 'Guest Excellence Commitment',
-      title: 'We Strive For 5-Star Excellence!',
+      tag: 'Hotel Guest Excellence',
+      title: 'We Strive For An Exceptional Hotel Stay!',
       icon: HeartHandshake,
-      body: `At ${restaurantName}, our entire staff takes immense pride in delivering top-tier hospitality and memorable dining.`,
+      body: `At ${restaurantName}, our entire hotel team is committed to making your stay in Patna memorable, safe, and truly comfortable.`,
       notice: `You selected ${attemptedRating} star${attemptedRating > 1 ? 's' : ''}. We cannot accept ratings below 4 stars on this survey. Kindly grant us 4 or 5 stars so our team can continue serving you at their best!`,
       option5Title: 'Give 5 Stars',
-      option5Sub: 'Outstanding & Royal Experience!',
+      option5Sub: 'Outstanding & Memorable Hotel Stay!',
       option4Title: 'Give 4 Stars',
-      option4Sub: 'Very Good Hospitality',
+      option4Sub: 'Very Good Comfort & Hospitality',
     },
   }[category]
 

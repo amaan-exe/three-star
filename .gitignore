@@ -46,3 +46,6 @@ next-env.d.ts
 *service*account*.json
 serviceAccountKey.json
 
+
+.vercel
+.env*

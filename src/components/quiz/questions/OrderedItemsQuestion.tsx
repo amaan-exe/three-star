@@ -1,6 +1,6 @@
 'use client'
 
-import { UtensilsCrossed, Check, Plus, Sparkles } from 'lucide-react'
+import { BedDouble, Check, Plus, Sparkles } from 'lucide-react'
 
 export interface MenuItemData {
   id: string
@@ -29,9 +29,9 @@ export default function OrderedItemsQuestion({
   const getItemName = (item: MenuItemData): string => {
     if (typeof item.name === 'string') return item.name
     if (typeof item.name === 'object' && item.name !== null) {
-      return item.name.en || Object.values(item.name)[0] || 'Menu item'
+      return item.name.en || Object.values(item.name)[0] || 'Room / Amenity'
     }
-    return 'Menu item'
+    return 'Room / Amenity'
   }
 
   return (
@@ -46,21 +46,21 @@ export default function OrderedItemsQuestion({
           <span className="text-[11px] text-amber-800 font-medium">Optional</span>
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-          Which dishes did you{' '}
+          Which{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            order today
-          </span>
-          ?
+            room type or amenities
+          </span>{' '}
+          did you enjoy?
         </h2>
         <p className="text-sm text-stone-600">
-          Select dishes, biryani, or breads you enjoyed today
+          Select your room category or hotel services used during your stay
         </p>
       </div>
 
       {/* Grid of Menu Items */}
       <div
         role="group"
-        aria-label="Ordered dishes"
+        aria-label="Room types and services"
         className="py-2 flex flex-wrap justify-center gap-2.5 max-w-lg mx-auto"
       >
         {menuItems.map((item) => {
@@ -93,8 +93,8 @@ export default function OrderedItemsQuestion({
       </div>
 
       <div className="flex items-center justify-center gap-1.5 text-[11px] text-stone-400">
-        <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />
-        <span>Tap multiple items if you shared a meal</span>
+        <BedDouble className="w-3.5 h-3.5 text-amber-600" />
+        <span>Tap multiple items if you experienced several hotel services</span>
       </div>
     </div>
   )

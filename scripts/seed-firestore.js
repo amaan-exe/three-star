@@ -28,14 +28,14 @@ async function seed() {
   await db.collection('businesses').doc(businessId).set({
     id: businessId,
     name: 'Residence Inn',
-    category: 'restaurant',
+    category: 'hotel',
     location: 'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
     phone: '6201699943',
     secondary_phone: '6201699943',
     timezone: 'Asia/Kolkata',
     primary_color: '#d97706',
     welcome_message: {
-      en: 'Welcome to Residence Inn! Share your honest dining experience with us in 30 seconds. For helpline & orders call 6201699943.',
+      en: 'Welcome to Residence Inn! Share your honest hotel stay experience with us in 30 seconds. For reception & room service call 6201699943.',
     },
     google_review_url: 'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU',
     owner_id: 'owner-residence-inn',
@@ -44,14 +44,14 @@ async function seed() {
     created_at: now,
     updated_at: now,
   });
-  console.log('✅ Created business doc: residence-inn');
+  console.log('✅ Created business doc: residence-inn (hotel)');
 
   // 2. Campaigns
   const campaigns = [
     {
       id: 'residence-inn',
       business_id: businessId,
-      name: 'Table Stands - Dine-In QR',
+      name: 'Room Keycard & Desk QR',
       slug: 'residence-inn',
       active: true,
       created_at: now,
@@ -59,7 +59,7 @@ async function seed() {
     {
       id: 'pm-zaika',
       business_id: businessId,
-      name: 'Residence Inn - Table Stand QR',
+      name: 'Reception & Front Desk Stand',
       slug: 'pm-zaika',
       active: true,
       created_at: now,
@@ -67,7 +67,7 @@ async function seed() {
     {
       id: 'patna-dining',
       business_id: businessId,
-      name: 'Main Dining Hall Stand',
+      name: 'In-Room Directory Stand',
       slug: 'patna-dining',
       active: true,
       created_at: now,
@@ -77,34 +77,34 @@ async function seed() {
   for (const c of campaigns) {
     await db.collection('campaigns').doc(c.id).set(c);
   }
-  console.log('✅ Created campaigns: residence-inn, pm-zaika, patna-dining');
+  console.log('✅ Created hotel campaigns: residence-inn, pm-zaika, patna-dining');
 
-  // 3. Menu Items
+  // 3. Room Types & Hotel Services (menu_items collection)
   const menuItems = [
-    { id: 'item-1', business_id: businessId, name: { en: 'Residence Inn Special Biryani' }, position: 1, active: true },
-    { id: 'item-2', business_id: businessId, name: { en: 'Chicken Dum Biryani' }, position: 2, active: true },
-    { id: 'item-3', business_id: businessId, name: { en: 'Mutton Handi Special' }, position: 3, active: true },
-    { id: 'item-4', business_id: businessId, name: { en: 'Chicken Tikka Butter Masala' }, position: 4, active: true },
-    { id: 'item-5', business_id: businessId, name: { en: 'Paneer Butter Masala' }, position: 5, active: true },
-    { id: 'item-6', business_id: businessId, name: { en: 'Dal Makhani Delight' }, position: 6, active: true },
-    { id: 'item-7', business_id: businessId, name: { en: 'Special Fried Rice' }, position: 7, active: true },
-    { id: 'item-8', business_id: businessId, name: { en: 'Butter Naan & Rumali Roti' }, position: 8, active: true },
-    { id: 'item-9', business_id: businessId, name: { en: 'Gulab Jamun with Ice Cream' }, position: 9, active: true },
+    { id: 'item-1', business_id: businessId, name: { en: 'Executive Deluxe Room' }, position: 1, active: true },
+    { id: 'item-2', business_id: businessId, name: { en: 'Premium King Suite' }, position: 2, active: true },
+    { id: 'item-3', business_id: businessId, name: { en: 'Cozy Standard AC Room' }, position: 3, active: true },
+    { id: 'item-4', business_id: businessId, name: { en: 'Complimentary Buffet Breakfast' }, position: 4, active: true },
+    { id: 'item-5', business_id: businessId, name: { en: '24/7 In-Room Dining' }, position: 5, active: true },
+    { id: 'item-6', business_id: businessId, name: { en: 'High-Speed Wi-Fi & Work Desk' }, position: 6, active: true },
+    { id: 'item-7', business_id: businessId, name: { en: 'Express Check-in & Check-out' }, position: 7, active: true },
+    { id: 'item-8', business_id: businessId, name: { en: 'Airport & Railway Pick-up / Drop' }, position: 8, active: true },
+    { id: 'item-9', business_id: businessId, name: { en: 'Daily Housekeeping & Laundry' }, position: 9, active: true },
   ];
 
   for (const m of menuItems) {
     await db.collection('menu_items').doc(m.id).set(m);
   }
-  console.log('✅ Created 9 menu items');
+  console.log('✅ Created 9 room types & hotel services');
 
   // 4. Questions
   const questions = [
-    { id: 'q-overall', business_id: businessId, key: 'overall_rating', type: 'rating', text: { en: 'Overall Experience' }, position: 1 },
-    { id: 'q-food', business_id: businessId, key: 'food_rating', type: 'rating', text: { en: 'Food & Flavors' }, position: 2 },
-    { id: 'q-service', business_id: businessId, key: 'service_rating', type: 'rating', text: { en: 'Hospitality & Service' }, position: 3 },
-    { id: 'q-liked', business_id: businessId, key: 'liked', type: 'multi_choice', text: { en: 'What did you like most?' }, position: 4 },
-    { id: 'q-ordered', business_id: businessId, key: 'ordered', type: 'multi_choice', text: { en: 'Dishes ordered today' }, position: 5 },
-    { id: 'q-contact', business_id: businessId, key: 'customer_contact', type: 'text', text: { en: 'Contact Details' }, position: 6 },
+    { id: 'q-overall', business_id: businessId, key: 'overall_rating', type: 'rating', text: { en: 'Overall Hotel Stay' }, position: 1 },
+    { id: 'q-food', business_id: businessId, key: 'food_rating', type: 'rating', text: { en: 'Room Comfort & Cleanliness' }, position: 2 },
+    { id: 'q-service', business_id: businessId, key: 'service_rating', type: 'rating', text: { en: 'Hospitality & Staff' }, position: 3 },
+    { id: 'q-liked', business_id: businessId, key: 'liked', type: 'multi_choice', text: { en: 'Stay Highlights' }, position: 4 },
+    { id: 'q-ordered', business_id: businessId, key: 'ordered', type: 'multi_choice', text: { en: 'Rooms & Services Experienced' }, position: 5 },
+    { id: 'q-contact', business_id: businessId, key: 'customer_contact', type: 'text', text: { en: 'Guest Contact Details' }, position: 6 },
   ];
 
   for (const q of questions) {

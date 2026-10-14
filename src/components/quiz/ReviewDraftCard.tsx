@@ -43,12 +43,12 @@ export default function ReviewDraftCard({
           if (data?.final_text || data?.original_text) {
             setDraft(data.final_text || data.original_text)
           } else {
-            setDraft(`Had a wonderful experience at ${restaurantName || 'Residence Inn'} today! Everything was exceptional and freshly prepared, and the service was warm and attentive. Highly recommended!`)
+            setDraft(`Had a wonderful stay at ${restaurantName || 'Residence Inn'}! The rooms were clean, comfortable, and peaceful, and the hotel staff was remarkably warm and attentive. Highly recommend staying here in Patna!`)
           }
         })
         .catch((err) => {
           console.warn('Draft load error:', err)
-          setDraft(`Had a wonderful experience at ${restaurantName || 'Residence Inn'} today! Everything was exceptional and freshly prepared, and the service was warm and attentive. Highly recommended!`)
+          setDraft(`Had a wonderful stay at ${restaurantName || 'Residence Inn'}! The rooms were clean, comfortable, and peaceful, and the hotel staff was remarkably warm and attentive. Highly recommend staying here in Patna!`)
         })
         .finally(() => setIsLoadingDraft(false))
     }
