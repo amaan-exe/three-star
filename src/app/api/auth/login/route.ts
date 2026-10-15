@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid username or password. For Residence Inn admin, use admin@residency.com or admin with your access key.' },
+        { error: 'Invalid username or password. For Motu Seth admin, use admin@motuseth.com or admin with your access key.' },
         { status: 401 }
       )
     }

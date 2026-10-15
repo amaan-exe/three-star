@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Residence Inn — Feedback & Reviews',
-    short_name: 'Residence Inn',
-    description: 'Instant QR customer feedback, smart AI reviews & live hospitality dashboard for Residence Inn, Patna',
+    name: 'Motu Seth Restaurant — Feedback & Reviews',
+    short_name: 'Motu Seth',
+    description: 'Instant QR customer feedback, smart AI reviews & live dining dashboard for Motu Seth Restaurant, Bailey Road, Patna',
     start_url: '/',
     scope: '/',
     display: 'standalone',
@@ -42,10 +42,10 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: 'Guest Feedback Survey',
+        name: 'Diner Feedback Survey',
         short_name: 'Feedback',
-        description: 'Open customer survey experience for Residence Inn',
-        url: '/r/residence-inn',
+        description: 'Open customer survey experience for Motu Seth Restaurant',
+        url: '/r/motu-seth',
         icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
       },
       {

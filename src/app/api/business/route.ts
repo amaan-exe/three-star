@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     const db = getFirestoreDb()
     const data = parsed.data
-    const businessId = user.businessId || 'residence-inn'
+    const businessId = user.businessId || 'motu-seth'
     const now = new Date().toISOString()
 
     const updateDoc = {

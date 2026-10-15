@@ -1,6 +1,6 @@
 'use client'
 
-import { HeartHandshake, Sparkles, Bed, MapPin, BellRing, BadgePercent, Check } from 'lucide-react'
+import { Utensils, HeartHandshake, Sparkles, Scale, Eye, BadgePercent, Check } from 'lucide-react'
 
 interface ComplimentsQuestionProps {
   value: string[]
@@ -8,12 +8,12 @@ interface ComplimentsQuestionProps {
 }
 
 const COMPLIMENT_OPTIONS = [
-  { key: 'cleanliness', label: 'Spotless Cleanliness', icon: Sparkles, desc: 'Fresh linens, sanitised room & bathroom' },
-  { key: 'hospitality', label: 'Courteous Front Desk', icon: HeartHandshake, desc: 'Warm welcome & smooth check-in/out' },
-  { key: 'comfort', label: 'Comfortable Bed & AC', icon: Bed, desc: 'Peaceful sleep & modern amenities' },
-  { key: 'location', label: 'Prime Location', icon: MapPin, desc: 'Near P&M Mall & Patliputra zone' },
-  { key: 'room_service', label: 'Prompt Room Service', icon: BellRing, desc: 'Fast assistance & helpful housekeeping' },
-  { key: 'value', label: 'Great Value Stay', icon: BadgePercent, desc: 'Luxury comfort at a fair tariff' },
+  { key: 'food', label: 'Authentic Flavour', icon: Utensils, desc: 'Rich Dum spices & tender preparations' },
+  { key: 'service', label: 'Warm Hospitality', icon: HeartHandshake, desc: 'Polite, attentive table staff' },
+  { key: 'ambience', label: 'Pleasant Ambience', icon: Sparkles, desc: 'Clean, comfortable 4th floor dining' },
+  { key: 'portion_size', label: 'Generous Portions', icon: Scale, desc: 'Filling & satisfying quantity' },
+  { key: 'presentation', label: 'Appetizing Plating', icon: Eye, desc: 'Piping hot & beautifully served' },
+  { key: 'value', label: 'Great Value for Money', icon: BadgePercent, desc: 'Superb quality at fair prices' },
 ]
 
 export default function ComplimentsQuestion({ value, onChange }: ComplimentsQuestionProps) {
@@ -44,7 +44,7 @@ export default function ComplimentsQuestion({ value, onChange }: ComplimentsQues
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Select highlights that stood out during your stay at Residence Inn
+          Select highlights that stood out during your visit to Motu Seth Restaurant
         </p>
       </div>
 

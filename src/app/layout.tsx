@@ -12,12 +12,12 @@ export const metadata: Metadata = {
     default: 'ReviewPulse — Restaurant Feedback & Authentic Reviews',
     template: '%s | ReviewPulse',
   },
-  description: 'QR-based customer feedback platform for Residence Inn with AI-assisted review drafting',
-  applicationName: 'Residence Inn Feedback',
+  description: 'QR-based customer feedback platform for Motu Seth Restaurant with AI-assisted review drafting',
+  applicationName: 'Motu Seth Restaurant',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Residence Inn',
+    title: 'Motu Seth',
   },
   formatDetection: {
     telephone: false,

@@ -104,13 +104,13 @@ export default function DashboardWorkspace({
       icon: MessageSquareHeart,
       badge: feedbackList.length > 0 ? feedbackList.length : undefined,
     },
-    { key: 'menu', label: 'Rooms & Services', icon: BedDouble, badge: menuItems.length },
+    { key: 'menu', label: 'Menu Items', icon: Utensils, badge: menuItems.length },
     { key: 'settings', label: 'Settings', icon: Settings },
   ]
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-safe-nav md:pb-6">
-      {/* Hotel Header */}
+      {/* Restaurant Header */}
       <div className="space-y-3 pb-3 border-b border-slate-800/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="space-y-0.5">
@@ -123,15 +123,15 @@ export default function DashboardWorkspace({
               </span>
             </div>
             <p className="text-xs text-slate-400 truncate max-w-xl">
-              {business.location ? `${business.location} • ` : ''}Hotel Guest Experience &amp; Analytics
+              {business.location ? `${business.location} • ` : ''}Restaurant Dining Experience &amp; Analytics
             </p>
           </div>
 
           {/* Quick Action Buttons for Mobile / Tablet */}
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            {/* Live Survey Guest Preview */}
+            {/* Live Survey Diner Preview */}
             <Link
-              href={campaigns[0]?.slug ? `/r/${campaigns[0].slug}` : '/r/residence-inn'}
+              href={campaigns[0]?.slug ? `/r/${campaigns[0].slug}` : '/r/motu-seth'}
               target="_blank"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors shadow-xs active:scale-95"
             >

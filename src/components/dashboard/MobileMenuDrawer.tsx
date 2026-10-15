@@ -58,11 +58,11 @@ export default function MobileMenuDrawer({
   }
 
   const handleShareSurvey = async () => {
-    const surveyUrl = `${window.location.origin}/r/residence-inn`
+    const surveyUrl = `${window.location.origin}/r/motu-seth`
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${restaurantName} — Guest Feedback`,
+          title: `${restaurantName} — Diner Feedback`,
           text: `Share your dining experience at ${restaurantName}!`,
           url: surveyUrl,
         })
@@ -87,14 +87,14 @@ export default function MobileMenuDrawer({
         <div className="flex items-center justify-between pb-2 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 flex items-center justify-center text-white font-extrabold shadow-md shadow-amber-600/25 text-xs tracking-wider">
-              PMZ
+              MS
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight leading-tight">
                 {restaurantName}
               </h2>
               <p className="text-[11px] text-slate-400">
-                {restaurantLocation || 'Patna'} • Management Portal
+                {restaurantLocation || 'Bailey Road, Patna'} • Management Portal
               </p>
             </div>
           </div>
@@ -233,14 +233,14 @@ export default function MobileMenuDrawer({
 
           <div className="grid grid-cols-2 gap-2">
             <Link
-              href="/r/residence-inn"
+              href="/r/motu-seth"
               target="_blank"
               onClick={onClose}
               className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 flex flex-col items-center justify-center text-center gap-1.5 hover:bg-slate-800/60 transition-colors"
             >
               <ExternalLink className="w-4 h-4 text-amber-400" />
               <span className="text-xs font-bold text-slate-200">Open Live Survey</span>
-              <span className="text-[10px] text-slate-400">Guest mobile view</span>
+              <span className="text-[10px] text-slate-400">Diner mobile view</span>
             </Link>
 
             <button

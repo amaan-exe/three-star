@@ -7,21 +7,21 @@ interface ThankYouCardProps {
   slug?: string
 }
 
-export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps) {
+export default function ThankYouCard({ restaurantName = 'Motu Seth Restaurant', slug }: ThankYouCardProps) {
   const handleShare = async () => {
     if (typeof window === 'undefined') return
     const url = window.location.href
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${restaurantName} — Exceptional Hotel Hospitality & Comfort`,
-          text: `Check out ${restaurantName} behind P&M Mall and Ion Digital Zone, Patliputra, Patna!`,
+          title: `${restaurantName} — Delicious Food & Warm Hospitality`,
+          text: `Check out ${restaurantName} (A Unit Of Muskan Brothers Hospitality), 4th Floor, Ishwar Arcade, Service Rd, Bailey Rd, near Raj Palace, S. K. Puram, Danapur, Patna, Bihar 801503!`,
           url,
         })
       } catch {}
     } else {
       navigator.clipboard.writeText(url)
-      alert('Hotel link copied to clipboard!')
+      alert('Restaurant link copied to clipboard!')
     }
   }
 
@@ -50,8 +50,8 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-xs mx-auto">
-            Your honest thoughts help the leadership and team at{' '}
-            <strong className="text-stone-800 font-semibold">{restaurantName || 'Residence Inn'}</strong> maintain
+            Your honest thoughts help the culinary leadership and team at{' '}
+            <strong className="text-stone-800 font-semibold">{restaurantName}</strong> maintain
             the highest hospitality standard.
           </p>
         </div>
@@ -64,11 +64,11 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
               <span>Feedback Recorded Successfully</span>
             </div>
             <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full border border-amber-300/40">
-              Verified Guest
+              Verified Diner
             </span>
           </div>
           <p className="text-xs text-stone-600 leading-relaxed">
-            Our management team and culinary staff review every response to continually perfect our dishes, guest suites, and royal hospitality. We look forward to hosting you again soon!
+            Our management team and culinary staff review every response to continually perfect our dishes, appetizers, biryanis, and royal dining hospitality. We look forward to hosting you again soon!
           </p>
         </div>
 
@@ -76,17 +76,17 @@ export default function ThankYouCard({ restaurantName, slug }: ThankYouCardProps
         <div className="space-y-2.5 pt-1">
           {/* Primary: Direct Call to Restaurant */}
           <a
-            href="tel:6201699943"
+            href="tel:7631996611"
             className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-bold shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 text-sm transition-all duration-200 cursor-pointer active:scale-95"
           >
             <Phone className="w-4 h-4" />
-            <span>Call Helpline: +91 62016 99943</span>
+            <span>Call Helpline: +91 76319 96611</span>
           </a>
 
           {/* Secondary Buttons Row */}
           <div className="grid grid-cols-2 gap-2">
             <a
-              href="https://www.google.com/maps/place/?q=place_id:ChIJkaqpBNhX7TkRe6PNrOcTDZU"
+              href="https://www.google.com/maps/place/?q=place_id:ChIJA-ShB09W7TkRdmS5DCofbiw"
               target="_blank"
               rel="noopener noreferrer"
               className="h-11 px-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/90 text-stone-700 hover:text-stone-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"

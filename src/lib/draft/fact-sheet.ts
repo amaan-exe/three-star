@@ -13,6 +13,7 @@ export interface FactSheet {
   liked: string[]
   ordered: string[]
   comment: string | null
+  customerName?: string | null
 }
 
 export function ratingToTone(rating: number): AspectTone {
@@ -38,6 +39,10 @@ export function buildFactSheet(
   const liked = (answerMap.get('liked') as string[]) || []
   const orderedIds = (answerMap.get('ordered') as string[]) || []
   const comment = (answerMap.get('comment') as string) || null
+  const customerName =
+    (typeof answerMap.get('customer_name') === 'string' && answerMap.get('customer_name')) ||
+    (typeof answerMap.get('customer_contact') === 'object' && answerMap.get('customer_contact')?.name) ||
+    null
 
   const ordered: string[] = []
   for (const id of orderedIds) {
@@ -53,6 +58,7 @@ export function buildFactSheet(
     liked,
     ordered,
     comment: comment ? sanitizeComment(comment) : null,
+    customerName: customerName ? customerName.trim() : null,
   }
 
   if (typeof overallRating === 'number' && overallRating >= 1 && overallRating <= 5) {

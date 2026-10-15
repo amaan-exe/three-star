@@ -14,7 +14,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 1,
     label: 'Needs Attention',
-    desc: 'Slow check-in, inattentive, or unhelpful',
+    desc: 'Slow, inattentive, or unhelpful',
     icon: Frown,
     activeBorder: 'border-rose-400',
     activeBg: 'bg-rose-50',
@@ -27,7 +27,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 2,
     label: 'Fair',
-    desc: 'Could be friendlier or more responsive',
+    desc: 'Could be friendlier or faster',
     icon: Meh,
     activeBorder: 'border-amber-400',
     activeBg: 'bg-amber-50',
@@ -40,7 +40,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 3,
     label: 'Good',
-    desc: 'Helpful & met stay expectations',
+    desc: 'Attentive & met expectations',
     icon: Smile,
     activeBorder: 'border-stone-400',
     activeBg: 'bg-stone-100',
@@ -53,7 +53,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 4,
     label: 'Very Good',
-    desc: 'Warm, courteous, and prompt staff',
+    desc: 'Warm, attentive, and helpful staff',
     icon: Heart,
     activeBorder: 'border-emerald-400',
     activeBg: 'bg-emerald-50',
@@ -66,7 +66,7 @@ const SERVICE_OPTIONS = [
   {
     rating: 5,
     label: 'Royal & Outstanding',
-    desc: 'Exceptional hospitality & 24/7 care',
+    desc: 'Outstanding hospitality & care',
     icon: Crown,
     activeBorder: 'border-amber-500',
     activeBg: 'bg-gradient-to-r from-amber-50 via-amber-100/40 to-amber-50',
@@ -81,7 +81,7 @@ const SERVICE_OPTIONS = [
 export default function ServiceRatingQuestion({
   value,
   onChange,
-  restaurantName = 'Residence Inn',
+  restaurantName = 'Motu Seth Restaurant',
 }: ServiceRatingQuestionProps) {
   const [showLowRatingModal, setShowLowRatingModal] = useState(false)
   const [attemptedRating, setAttemptedRating] = useState<number>(3)
@@ -140,12 +140,12 @@ export default function ServiceRatingQuestion({
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
           How was the{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            hospitality &amp; staff
+            hospitality &amp; service
           </span>
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Front desk, check-in speed, room service, &amp; staff courtesy (4 or 5 stars required)
+          Staff friendliness, attentiveness, and order speed (4 or 5 stars required)
         </p>
       </div>
 

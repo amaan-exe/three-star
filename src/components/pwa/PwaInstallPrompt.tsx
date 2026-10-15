@@ -64,7 +64,7 @@ export default function PwaInstallPrompt() {
               Install ReviewPulse
             </h2>
             <p className="text-xs text-slate-400">
-              Residence Inn Feedback &amp; Portal
+              Motu Seth Restaurant Feedback &amp; Portal
             </p>
           </div>
         </div>

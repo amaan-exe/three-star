@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const proto = request.headers.get('x-forwarded-proto') || (process.env.NODE_ENV === 'production' ? 'https' : 'http')
   const host = request.headers.get('x-forwarded-host') || request.headers.get('host')
 
-  // Dynamic origin resolution with fallback to production hotel domain
+  // Dynamic origin resolution with fallback to production restaurant domain
   let baseUrl = ''
   if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.includes('pmzaika')) {
     baseUrl = `${proto}://${host}`
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
           'Content-Type': 'image/svg+xml',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           ...(isDownload
-            ? { 'Content-Disposition': `attachment; filename="residence-inn-qr-${slug}.svg"` }
+            ? { 'Content-Disposition': `attachment; filename="motu-seth-qr-${slug}.svg"` }
             : {}),
         },
       })
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'image/png',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         ...(isDownload
-          ? { 'Content-Disposition': `attachment; filename="residence-inn-qr-${slug}.png"` }
+          ? { 'Content-Disposition': `attachment; filename="motu-seth-qr-${slug}.png"` }
           : {}),
       },
     })

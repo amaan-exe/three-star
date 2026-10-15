@@ -1,12 +1,18 @@
 /**
- * Residence Inn Restaurant Authentication & Alias Helpers
+ * Motu Seth Restaurant Authentication & Alias Helpers
  */
 
-export const RESIDENCE_INN_PRIMARY_EMAIL = 'admin@residency.com'
+export const MOTU_SETH_PRIMARY_EMAIL = 'admin@motuseth.com'
+export const RESIDENCE_INN_PRIMARY_EMAIL = 'admin@motuseth.com'
 
-const RESIDENCE_ALIASES = new Set([
+const MOTU_ALIASES = new Set([
   'admin',
   'owner',
+  'motu',
+  'motuseth',
+  'motu-seth',
+  'admin@motuseth.com',
+  'owner@motuseth.com',
   'residency',
   'admin@residency.com',
   'owner@residency.com',
@@ -19,7 +25,7 @@ const RESIDENCE_ALIASES = new Set([
 
 /**
  * Resolves any restaurant administrator alias or custom email
- * to the registered Residence Inn admin email.
+ * to the registered Motu Seth Restaurant admin email.
  */
 export function resolveZaikaEmail(input?: string | null): string | null {
   if (!input || typeof input !== 'string') return null
@@ -27,9 +33,10 @@ export function resolveZaikaEmail(input?: string | null): string | null {
   if (!trimmed) return null
 
   const lower = trimmed.toLowerCase()
-  if (RESIDENCE_ALIASES.has(lower)) {
-    return RESIDENCE_INN_PRIMARY_EMAIL
+  if (MOTU_ALIASES.has(lower)) {
+    return MOTU_SETH_PRIMARY_EMAIL
   }
 
   return trimmed
 }
+

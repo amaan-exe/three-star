@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { BedDouble, Plus, Trash2, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import { Utensils, Plus, Trash2, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 
 export interface MenuItem {
   id: string
@@ -42,7 +42,7 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
         onRefresh()
       } else {
         const data = await res.json()
-        setError(data.error || 'Failed to add item')
+        setError(data.error || 'Failed to add dish')
       }
     } catch {
       setError('Connection error')
@@ -65,7 +65,7 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
   }
 
   const handleDeleteDish = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this room type or service?')) return
+    if (!confirm('Are you sure you want to delete this dish?')) return
     try {
       const res = await fetch(`/api/business/menu?id=${id}`, {
         method: 'DELETE',
@@ -79,32 +79,32 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
   const getDishName = (item: MenuItem): string => {
     if (typeof item.name === 'string') return item.name
     if (typeof item.name === 'object' && item.name !== null) {
-      return item.name.en || Object.values(item.name)[0] || 'Room / Amenity'
+      return item.name.en || Object.values(item.name)[0] || 'Dish'
     }
-    return 'Room / Amenity'
+    return 'Dish'
   }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-4xl">
       <div>
-        <h2 className="text-xl font-bold text-white tracking-tight">Rooms &amp; Services (Quiz Q5)</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">Menu &amp; Dishes (Quiz Q5)</h2>
         <p className="text-xs text-slate-400 mt-0.5">
-          Room categories and hotel amenities listed here appear as selectable chips in Question 5 of the guest survey
+          Signature dishes and menu items listed here appear as selectable chips in Question 5 of the diner survey
         </p>
       </div>
 
-      {/* Add New Room / Service Card */}
+      {/* Add New Dish Card */}
       <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm text-white">Add Room Type or Hotel Amenity</CardTitle>
+          <CardTitle className="text-sm text-white">Add Dish or Specialty</CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Room categories, breakfast buffet, airport shuttle, or special hotel amenities
+            Biryanis, handi specials, tandoori starters, curries, breads, or desserts
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddDish} className="flex gap-3">
             <Input
-              placeholder="e.g. Deluxe Room, Executive Suite, Breakfast Buffet, High-Speed Wi-Fi..."
+              placeholder="e.g. Special Chicken Dum Biryani, Mutton Handi, Paneer Tikka, Butter Naan..."
               value={dishName}
               onChange={(e) => setDishName(e.target.value)}
               className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs flex-1"
@@ -112,7 +112,7 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
             <Button
               type="submit"
               disabled={isAdding || !dishName.trim()}
-              className="bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs font-semibold h-10 px-5 rounded-xl shadow-md shadow-rose-500/20 cursor-pointer shrink-0"
+              className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-semibold h-10 px-5 rounded-xl shadow-md shadow-amber-500/20 cursor-pointer shrink-0"
             >
               {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
               Add Dish
@@ -125,7 +125,7 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
       {/* Dishes List */}
       <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
         <CardHeader className="pb-3 border-b border-slate-800">
-          <CardTitle className="text-sm text-white">Active Quiz Menu Items ({menuItems.length})</CardTitle>
+          <CardTitle className="text-sm text-white">Active Menu Items ({menuItems.length})</CardTitle>
           <CardDescription className="text-xs text-slate-400">
             {menuItems.length === 0
               ? 'Currently 0 dishes added — Question 5 will be automatically hidden from customer quizzes until you add at least 1 dish.'
@@ -135,8 +135,8 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
         <CardContent className="pt-4">
           {menuItems.length === 0 ? (
             <div className="py-10 text-center text-slate-400 text-xs">
-              <BedDouble className="w-8 h-8 mx-auto text-slate-600 mb-2" />
-              <p>No rooms or amenities added yet</p>
+              <Utensils className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+              <p>No dishes added yet</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-800">
@@ -147,8 +147,8 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
                 return (
                   <div key={item.id} className="py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400">
-                        <BedDouble className="w-4 h-4 text-amber-400" />
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <Utensils className="w-4 h-4" />
                       </div>
                       <div>
                         <p className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-slate-500 line-through'}`}>

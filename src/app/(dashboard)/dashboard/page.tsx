@@ -20,8 +20,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const user = await getAdminSession()
   const db = getFirestoreDb()
 
-  // 1. Fetch restaurant owned by user, or fall back to Residence Inn
-  const business = await getBizDoc(user?.businessId || 'residence-inn')
+  // 1. Fetch restaurant owned by user, or fall back to Motu Seth Restaurant
+  const business = await getBizDoc(user?.businessId || 'motu-seth')
 
   if (!business) {
     return <OnboardingWizard />

@@ -28,14 +28,14 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           </div>
           <h1 className="text-xl font-bold text-stone-900">QR Code Not Found</h1>
           <p className="text-sm text-stone-500">
-            This QR code is not valid or has been removed. Please ask the front desk at Residence Inn for assistance.
+            This QR code is not valid or has been removed. Please ask your server at Motu Seth Restaurant for assistance.
           </p>
           <div className="pt-2">
             <a
-              href="tel:6201699943"
+              href="tel:7631996611"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 hover:bg-amber-100 transition-colors"
             >
-              📞 Call: +91 62016 99943
+              📞 Call: +91 76319 96611
             </a>
           </div>
         </div>
@@ -53,14 +53,14 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           </div>
           <h1 className="text-xl font-bold text-stone-900">Survey Temporarily Inactive</h1>
           <p className="text-sm text-stone-500">
-            This feedback code is currently paused by Residence Inn. Please check with your server.
+            This feedback code is currently paused by Motu Seth Restaurant. Please check with your server.
           </p>
           <div className="pt-2">
             <a
-              href="tel:6201699943"
+              href="tel:7631996611"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 hover:bg-amber-100 transition-colors"
             >
-              📞 Call: +91 62016 99943
+              📞 Call: +91 76319 96611
             </a>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
   const googleReviewUrl =
     campaign.google_review_url_override ||
     business?.google_review_url ||
-    'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU'
+    'https://search.google.com/local/writereview?placeid=ChIJA-ShB09W7TkRdmS5DCofbiw'
 
   // 2. Fetch menu items for the ordered items step
   const menuItems = await getMenuItems(campaign.business_id)
@@ -104,10 +104,10 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
     }
   }
 
-  const restaurantName = business?.name ?? 'Residence Inn'
+  const restaurantName = business?.name ?? 'Motu Seth Restaurant'
   const welcomeText =
     (business?.welcome_message?.en as string | undefined) ??
-    'Welcome to Residence Inn! Share your honest hotel stay experience with us in 30 seconds. For reception & room service call 6201699943.'
+    'Welcome to Motu Seth Restaurant! Share your honest dining experience with us in 30 seconds. For helpline & reservations call 7631996611.'
 
   return (
     <div className="min-h-screen min-h-[100dvh] min-h-safe-screen bg-[#faf8f5] bg-gradient-to-b from-[#fdfbf7] via-[#fbf7ee] to-[#f6efe0] text-stone-900 flex flex-col justify-between px-3 sm:px-6 pt-safe pb-safe py-3 sm:py-6 selection:bg-amber-600 selection:text-white relative overflow-x-hidden font-sans">
@@ -120,7 +120,7 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
         <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-stone-200/90 shadow-xs backdrop-blur-md">
           <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 shrink-0" />
           <span className="text-[10px] sm:text-[11px] font-bold text-amber-950 tracking-wide">
-            {restaurantName} • Guest Feedback
+            {restaurantName} • Diner Feedback
           </span>
         </div>
       </header>

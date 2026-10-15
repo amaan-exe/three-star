@@ -48,8 +48,8 @@ export default function SettingsTab({
   // Restaurant Profile state
   const [name, setName] = useState(business.name)
   const [location, setLocation] = useState(business.location || '')
-  const [phone, setPhone] = useState(business.phone || '6201699943')
-  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '6201699943')
+  const [phone, setPhone] = useState(business.phone || '7631996611')
+  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '7631996611')
   const [googleUrl, setGoogleUrl] = useState(business.googleReviewUrl || '')
   const [welcomeText, setWelcomeText] = useState(
     (typeof business.welcomeMessage === 'object' && business.welcomeMessage?.en) ||
@@ -232,7 +232,7 @@ export default function SettingsTab({
                 Profile Details
               </CardTitle>
               <CardDescription className="text-xs text-slate-400">
-                Information displayed to guests scanning QR codes
+                Information displayed to diners scanning QR codes
               </CardDescription>
             </CardHeader>
 
@@ -271,7 +271,7 @@ export default function SettingsTab({
                   id="sLoc"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013"
+                  placeholder="4th Floor, Ishwar Arcade, Service Rd, Bailey Rd, near Raj Palace, S. K. Puram, Danapur, Patna, Bihar 801503, India"
                   className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                 />
               </div>
@@ -291,7 +291,7 @@ export default function SettingsTab({
                     id="sPhone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="6201699943"
+                    placeholder="7631996611"
                     className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                   />
                   <p className="text-[10px] text-slate-400">
@@ -307,7 +307,7 @@ export default function SettingsTab({
                     id="sSecPhone"
                     value={secondaryPhone}
                     onChange={(e) => setSecondaryPhone(e.target.value)}
-                    placeholder="6201699943"
+                    placeholder="7631996611"
                     className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                   />
                   <p className="text-[10px] text-slate-400">
@@ -324,7 +324,7 @@ export default function SettingsTab({
                   id="sGoogle"
                   value={googleUrl}
                   onChange={(e) => setGoogleUrl(e.target.value)}
-                  placeholder="https://g.page/r/... or https://maps.app.goo.gl/..."
+                  placeholder="https://search.google.com/local/writereview?placeid=ChIJA-ShB09W7TkRdmS5DCofbiw"
                   className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                 />
                 <p className="text-[11px] text-slate-400">
@@ -397,8 +397,8 @@ export default function SettingsTab({
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   Aliases supported for login: <strong className="text-slate-300">admin</strong>,{' '}
                   <strong className="text-slate-300">owner</strong>,{' '}
-                  <strong className="text-slate-300">residence</strong>,{' '}
-                  <strong className="text-slate-300">residenceinn</strong>
+                  <strong className="text-slate-300">motu</strong>,{' '}
+                  <strong className="text-slate-300">motuseth</strong>
                 </p>
               </div>
             </div>

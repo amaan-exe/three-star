@@ -4,15 +4,19 @@ import { randomUUID } from 'crypto'
 export interface BusinessDoc {
   id: string
   name: string
+  unit?: string | null
   category?: string
   location?: string | null
   phone?: string | null
   secondary_phone?: string | null
+  gst_number?: string | null
+  fssai_number?: string | null
   timezone?: string
   primary_color?: string | null
   logo_url?: string | null
   welcome_message?: Record<string, string> | null
   google_review_url?: string | null
+  place_id?: string | null
   owner_id?: string
   owner_email?: string
   default_language?: string
@@ -107,11 +111,16 @@ export interface PrivateFeedbackDoc {
 }
 
 /**
- * Get the active business or create the Residence Inn profile if not present.
+ * Get the active business or create the Motu Seth Restaurant profile if not present.
  */
-export async function getBusiness(businessId = 'residence-inn'): Promise<BusinessDoc> {
+export async function getBusiness(businessId = 'motu-seth'): Promise<BusinessDoc> {
   const db = getFirestoreDb()
-  const doc = await db.collection('businesses').doc(businessId).get()
+  const targetId = businessId === 'residence-inn' ? 'motu-seth' : businessId
+  let doc = await db.collection('businesses').doc(targetId).get()
+
+  if (!doc.exists && businessId === 'residence-inn') {
+    doc = await db.collection('businesses').doc('residence-inn').get()
+  }
 
   if (doc.exists) {
     return { id: doc.id, ...(doc.data() as any) }
@@ -124,25 +133,29 @@ export async function getBusiness(businessId = 'residence-inn'): Promise<Busines
     return { id: first.id, ...(first.data() as any) }
   }
 
-  // Create default Residence Inn profile
+  // Create default Motu Seth Restaurant profile
   const now = new Date().toISOString()
   const defaultBiz: BusinessDoc = {
-    id: 'residence-inn',
-    name: 'Residence Inn',
-    category: 'hotel',
+    id: 'motu-seth',
+    name: 'Motu Seth Restaurant',
+    unit: 'A Unit Of Muskan Brothers Hospitality',
+    category: 'restaurant',
     location:
-      'behind P&M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013',
-    phone: '6201699943',
-    secondary_phone: '6201699943',
+      '4th Floor, Ishwar Arcade, Service Rd, Bailey Rd, near Raj Palace, S. K. Puram, Danapur, Patna, Bihar 801503, India',
+    place_id: 'ChIJA-ShB09W7TkRdmS5DCofbiw',
+    phone: '7631996611',
+    secondary_phone: '7631996611',
+    gst_number: '10ABCFM1572E1ZW',
+    fssai_number: '10421000000533',
     timezone: 'Asia/Kolkata',
     primary_color: '#d97706',
     welcome_message: {
-      en: 'Welcome to Residence Inn! Share your honest hotel stay experience with us in 30 seconds. For reception & room service call 6201699943.',
+      en: 'Welcome to Motu Seth Restaurant! Share your honest dining experience with us in 30 seconds. For helpline & orders call 7631996611.',
     },
     google_review_url:
-      'https://search.google.com/local/writereview?placeid=ChIJkaqpBNhX7TkRe6PNrOcTDZU',
-    owner_id: 'owner-residence-inn',
-    owner_email: 'admin@residency.com',
+      'https://search.google.com/local/writereview?placeid=ChIJA-ShB09W7TkRdmS5DCofbiw',
+    owner_id: 'owner-motu-seth',
+    owner_email: 'admin@motuseth.com',
     default_language: 'en',
     created_at: now,
     updated_at: now,
@@ -179,14 +192,14 @@ export async function getCampaignBySlug(slug: string): Promise<{
   }
 
   if (snap.empty) {
-    // If no campaign exists at all, auto-create the residence-inn campaign
+    // If no campaign exists at all, auto-create the motu-seth campaign
     const biz = await getBusiness()
     const now = new Date().toISOString()
     const defaultCampaign: CampaignDoc = {
-      id: 'residence-inn',
+      id: 'motu-seth',
       business_id: biz.id,
-      name: 'Table Stands - Dine-In QR',
-      slug: 'residence-inn',
+      name: 'Main Dining Table QR',
+      slug: 'motu-seth',
       active: true,
       created_at: now,
     }

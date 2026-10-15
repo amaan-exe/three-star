@@ -59,12 +59,12 @@ export default function OverviewTab({ analytics }: OverviewTabProps) {
   } = analytics
 
   const likedKeys = [
+    { key: 'taste', label: 'Authentic Flavour' },
+    { key: 'hospitality', label: 'Warm Hospitality' },
+    { key: 'ambience', label: 'Pleasant Ambience' },
+    { key: 'speed', label: 'Prompt Table Service' },
     { key: 'cleanliness', label: 'Spotless Cleanliness' },
-    { key: 'hospitality', label: 'Courteous Staff' },
-    { key: 'comfort', label: 'Comfortable Bed & AC' },
-    { key: 'location', label: 'Prime Location' },
-    { key: 'room_service', label: 'Prompt Room Service' },
-    { key: 'value', label: 'Great Value Stay' },
+    { key: 'value', label: 'Great Value' },
   ]
 
   return (
@@ -81,7 +81,7 @@ export default function OverviewTab({ analytics }: OverviewTabProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[11px] text-slate-400">QR code opens on guest phones</p>
+            <p className="text-[11px] text-slate-400">QR code opens on diner phones</p>
           </CardContent>
         </Card>
 
@@ -166,7 +166,7 @@ export default function OverviewTab({ analytics }: OverviewTabProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800">
-                <p className="text-xs text-slate-400">Room Comfort</p>
+                <p className="text-xs text-slate-400">Food &amp; Taste</p>
                 <p className="text-xl font-bold text-white mt-1">
                   {avgFood !== null ? avgFood.toFixed(1) : '—'}{' '}
                   <span className="text-[11px] font-normal text-slate-400">/ 5</span>
@@ -174,7 +174,7 @@ export default function OverviewTab({ analytics }: OverviewTabProps) {
               </div>
 
               <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800">
-                <p className="text-xs text-slate-400">Staff Hospitality</p>
+                <p className="text-xs text-slate-400">Service &amp; Hospitality</p>
                 <p className="text-xl font-bold text-white mt-1">
                   {avgService !== null ? avgService.toFixed(1) : '—'}{' '}
                   <span className="text-[11px] font-normal text-slate-400">/ 5</span>

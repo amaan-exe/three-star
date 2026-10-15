@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Always succeed from privacy standpoint or return guidance
     return NextResponse.json({
       success: true,
-      message: `Password reset instructions recorded for ${username}. If this account is registered with Residence Inn, your admin credentials can be updated or you can login directly with default master credentials (password123).`,
+      message: `Password reset instructions recorded for ${username}. If this account is registered with Motu Seth Restaurant, your admin credentials can be updated or you can login directly with default master credentials (password123).`,
     })
   } catch (err: any) {
     console.error('Password reset error:', err)

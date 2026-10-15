@@ -13,15 +13,15 @@ interface EmojiRatingQuestionProps {
 const EMOJI_OPTIONS = [
   { rating: 1, emoji: '😞', label: 'Needs Care' },
   { rating: 2, emoji: '😕', label: 'Fair' },
-  { rating: 3, emoji: '😐', label: 'Average' },
-  { rating: 4, emoji: '🙂', label: 'Comfortable' },
-  { rating: 5, emoji: '😍', label: 'Luxurious!' },
+  { rating: 3, emoji: '😐', label: 'Okay' },
+  { rating: 4, emoji: '🙂', label: 'Tasty!' },
+  { rating: 5, emoji: '😍', label: 'Delicious!' },
 ]
 
 export default function EmojiRatingQuestion({
   value,
   onChange,
-  restaurantName = 'Residence Inn',
+  restaurantName = 'Motu Seth Restaurant',
 }: EmojiRatingQuestionProps) {
   const [showLowRatingModal, setShowLowRatingModal] = useState(false)
   const [attemptedRating, setAttemptedRating] = useState<number>(3)
@@ -32,7 +32,7 @@ export default function EmojiRatingQuestion({
       setAttemptedRating(rating)
       setShowLowRatingModal(true)
       setWarningMessage(
-        `At ${restaurantName}, room ratings below 4 stars cannot be accepted. Please choose Comfortable (4) or Luxurious! (5) to continue.`
+        `At ${restaurantName}, food ratings below 4 stars cannot be accepted. Please choose Tasty! (4) or Delicious! (5) to continue.`
       )
       return
     }
@@ -78,21 +78,21 @@ export default function EmojiRatingQuestion({
           <span className="text-[11px] text-amber-800 font-medium">Required</span>
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-          How was your{' '}
+          How did you find the{' '}
           <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            room comfort &amp; cleanliness
+            food &amp; flavors
           </span>
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Cleanliness, bed comfort, quiet ambiance, &amp; amenities (4 or 5 stars required)
+          Taste, aroma, spices, and tenderness (4 or 5 stars required)
         </p>
       </div>
 
       {/* 5 Emoji Face Buttons */}
       <div
         role="radiogroup"
-        aria-label="Room comfort and cleanliness rating"
+        aria-label="Food and flavors rating"
         className="py-4 sm:py-6 flex items-center justify-center gap-1 sm:gap-3.5 flex-nowrap overflow-x-auto no-scrollbar"
       >
         {EMOJI_OPTIONS.map((opt) => {

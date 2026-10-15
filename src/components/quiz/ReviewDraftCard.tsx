@@ -43,12 +43,12 @@ export default function ReviewDraftCard({
           if (data?.final_text || data?.original_text) {
             setDraft(data.final_text || data.original_text)
           } else {
-            setDraft(`Had a wonderful stay at ${restaurantName || 'Residence Inn'}! The rooms were clean, comfortable, and peaceful, and the hotel staff was remarkably warm and attentive. Highly recommend staying here in Patna!`)
+            setDraft(`Had a wonderful dining experience at ${restaurantName || 'Motu Seth Restaurant'}! The food was delicious, aromatic, and full of rich flavor, and the hospitality was remarkably warm and attentive. Highly recommend dining here in Patna!`)
           }
         })
         .catch((err) => {
           console.warn('Draft load error:', err)
-          setDraft(`Had a wonderful stay at ${restaurantName || 'Residence Inn'}! The rooms were clean, comfortable, and peaceful, and the hotel staff was remarkably warm and attentive. Highly recommend staying here in Patna!`)
+          setDraft(`Had a wonderful dining experience at ${restaurantName || 'Motu Seth Restaurant'}! The food was delicious, aromatic, and full of rich flavor, and the hospitality was remarkably warm and attentive. Highly recommend dining here in Patna!`)
         })
         .finally(() => setIsLoadingDraft(false))
     }
@@ -304,7 +304,7 @@ export default function ReviewDraftCard({
           className="inline-flex items-center gap-1.5 text-xs text-amber-800 hover:text-amber-900 font-semibold hover:underline underline-offset-4 cursor-pointer transition-all"
         >
           <MessageSquareHeart className="w-3.5 h-3.5 text-amber-600" />
-          <span>Send private feedback directly to the hotel manager</span>
+          <span>Send private feedback directly to the restaurant manager</span>
         </button>
 
         <div>

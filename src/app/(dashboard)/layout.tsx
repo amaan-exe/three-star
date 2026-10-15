@@ -24,11 +24,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 flex items-center justify-center text-white font-extrabold shadow-md shadow-amber-600/20 group-hover:scale-105 transition-transform border border-amber-400/30 text-xs tracking-wider">
-                RI
+                MS
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-base text-white tracking-tight leading-tight">Residence Inn</span>
-                <span className="text-[10px] text-amber-400 font-semibold leading-none">Hotel Portal • Patna</span>
+                <span className="font-bold text-base text-white tracking-tight leading-tight">Motu Seth</span>
+                <span className="text-[10px] text-amber-400 font-semibold leading-none">Restaurant Portal • Bailey Road, Patna</span>
               </div>
             </Link>
 
@@ -65,8 +65,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 href="/dashboard?tab=menu"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-medium transition-colors"
               >
-                <BedDouble className="w-4 h-4 text-emerald-400" />
-                Rooms &amp; Services
+                <Utensils className="w-4 h-4 text-emerald-400" />
+                Menu Items
               </Link>
               <Link
                 href="/dashboard?tab=settings"
@@ -84,7 +84,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 {sessionUser.email}
               </span>
               <span className="text-[11px] text-amber-400 font-medium flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-400" /> Residence Inn Owner
+                <Sparkles className="w-3 h-3 text-amber-400" /> Motu Seth Owner
               </span>
             </div>
 

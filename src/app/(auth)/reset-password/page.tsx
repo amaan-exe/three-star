@@ -157,7 +157,7 @@ function ResetPasswordForm() {
             <Utensils className="w-4 h-4" />
           </div>
           <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-            Residence Inn Admin Security
+            Motu Seth Admin Security
           </span>
         </div>
         <CardTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -201,12 +201,12 @@ function ResetPasswordForm() {
             <div className="space-y-1.5">
               <Label htmlFor="resend-user" className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-amber-500" />
-                Hotel Username or Email
+                Restaurant Username or Email
               </Label>
               <Input
                 id="resend-user"
                 type="text"
-                placeholder="admin or admin@residency.com"
+                placeholder="admin or admin@motuseth.com"
                 value={resendUsername}
                 onChange={(e) => setResendUsername(e.target.value)}
                 required
@@ -368,7 +368,7 @@ function ResetPasswordForm() {
         >
           &larr; Back to Login
         </Link>
-        <span className="text-slate-600 text-[10px]">Residence Inn</span>
+        <span className="text-slate-600 text-[10px]">Motu Seth Restaurant</span>
       </CardFooter>
     </Card>
   )

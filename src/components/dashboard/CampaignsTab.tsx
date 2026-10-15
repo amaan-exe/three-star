@@ -123,7 +123,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Generate and manage tabletop QR codes, bill inserts, and counter stands for Residence Inn
+            Generate and manage tabletop QR codes, bill inserts, and counter stands for Motu Seth Restaurant
           </p>
         </div>
 
@@ -227,7 +227,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href={`/api/business/qr?slug=${camp.slug}&format=png&download=true&v=3`}
-                    download={`residence-inn-qr-${camp.slug}.png`}
+                    download={`motu-seth-qr-${camp.slug}.png`}
                     className="h-10 px-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors active:scale-[0.98]"
                   >
                     <Download className="w-3.5 h-3.5 text-amber-400" />
@@ -236,7 +236,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
 
                   <a
                     href={`/api/business/qr?slug=${camp.slug}&format=svg&download=true&v=3`}
-                    download={`residence-inn-qr-${camp.slug}.svg`}
+                    download={`motu-seth-qr-${camp.slug}.svg`}
                     className="h-10 px-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors active:scale-[0.98]"
                   >
                     <Download className="w-3.5 h-3.5 text-yellow-400" />
@@ -264,7 +264,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
             <QrCode className="w-10 h-10 mx-auto text-slate-600" />
             <div className="space-y-1">
               <p className="text-base font-bold text-white">No QR Campaigns Found</p>
-              <p className="text-xs text-slate-400">Click &ldquo;New QR Campaign&rdquo; above to generate a QR code for Residence Inn.</p>
+              <p className="text-xs text-slate-400">Click &ldquo;New QR Campaign&rdquo; above to generate a QR code for Motu Seth Restaurant.</p>
             </div>
           </div>
         )}

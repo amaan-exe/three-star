@@ -12,12 +12,11 @@ interface PrivateFeedbackModalProps {
 }
 
 const CATEGORIES = [
-  { key: 'room_comfort', label: 'Room Comfort & AC' },
-  { key: 'cleanliness', label: 'Cleanliness & Housekeeping' },
-  { key: 'service', label: 'Front Desk / Staff Hospitality' },
-  { key: 'checkin', label: 'Check-in / Check-out' },
-  { key: 'amenities', label: 'Wi-Fi & Amenities' },
-  { key: 'dining', label: 'Food & Room Service' },
+  { key: 'food', label: 'Food quality & taste' },
+  { key: 'service', label: 'Hospitality / Service' },
+  { key: 'waiting_time', label: 'Waiting time' },
+  { key: 'cleanliness', label: 'Cleanliness & Ambience' },
+  { key: 'billing', label: 'Billing / Price' },
   { key: 'other', label: 'Other' },
 ]
 
@@ -27,7 +26,7 @@ export default function PrivateFeedbackModal({
   sessionId,
   restaurantName,
 }: PrivateFeedbackModalProps) {
-  const [category, setCategory] = useState<string>('room_comfort')
+  const [category, setCategory] = useState<string>('food')
   const [message, setMessage] = useState('')
   const [contactName, setContactName] = useState('')
   const [contactValue, setContactValue] = useState('')
@@ -110,8 +109,8 @@ export default function PrivateFeedbackModal({
                   <Phone className="w-3.5 h-3.5 text-amber-700" />
                   Urgent? Call manager directly:
                 </span>
-                <a href="tel:6201699943" className="font-bold underline hover:text-amber-700">
-                  +91 62016 99943
+                <a href="tel:7631996611" className="font-bold underline hover:text-amber-700">
+                  +91 76319 96611
                 </a>
               </div>
             </div>

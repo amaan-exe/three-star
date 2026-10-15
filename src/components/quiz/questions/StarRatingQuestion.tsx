@@ -11,14 +11,14 @@ interface StarRatingQuestionProps {
 }
 
 const RATING_LABELS: Record<number, string> = {
-  4: '4 Stars — Very comfortable & relaxing!',
-  5: '5 Stars — Outstanding hotel experience!',
+  4: '4 Stars — Very delicious & enjoyable dining!',
+  5: '5 Stars — Outstanding dining experience!',
 }
 
 export default function StarRatingQuestion({
   value = 5,
   onChange,
-  restaurantName = 'Residence Inn',
+  restaurantName = 'Motu Seth Restaurant',
 }: StarRatingQuestionProps) {
   const [hovered, setHovered] = useState<number | null>(null)
   const [showLowRatingModal, setShowLowRatingModal] = useState(false)

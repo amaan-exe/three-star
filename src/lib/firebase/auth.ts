@@ -40,9 +40,9 @@ export async function verifyAdminToken(token: string): Promise<AdminSessionUser 
     const { payload } = await jwtVerify(token, getSecret(), { algorithms: ['HS256'] })
     return {
       id: String(payload.sub),
-      email: String(payload.email || 'admin@residency.com'),
+      email: String(payload.email || 'admin@motuseth.com'),
       role: String(payload.role || 'owner'),
-      businessId: String(payload.businessId || 'residence-inn'),
+      businessId: String(payload.businessId || 'motu-seth'),
       username: payload.username ? String(payload.username) : undefined,
     }
   } catch {
@@ -114,35 +114,45 @@ export async function authenticateAdminUser(
     }
   }
 
-  // If alias used like 'admin' or 'residency' or 'owner'
-  if (!userDoc && (cleanId === 'admin' || cleanId === 'owner' || cleanId === 'residency')) {
+  // If alias used like 'admin' or 'owner' or 'motu' or 'residency'
+  if (!userDoc && (cleanId === 'admin' || cleanId === 'owner' || cleanId === 'motu' || cleanId === 'residency')) {
     const fallbackSnap = await db
       .collection('users')
-      .where('email', '==', 'admin@residency.com')
+      .where('email', '==', 'admin@motuseth.com')
       .limit(1)
       .get()
     if (!fallbackSnap.empty) {
       userDoc = fallbackSnap.docs[0]
+    } else {
+      const legacySnap = await db
+        .collection('users')
+        .where('email', '==', 'admin@residency.com')
+        .limit(1)
+        .get()
+      if (!legacySnap.empty) {
+        userDoc = legacySnap.docs[0]
+      }
     }
   }
 
   if (!userDoc) {
-    // If not found in users collection yet, but matches the official Residence Inn admin credentials
+    // If not found in users collection yet, but matches the official Motu Seth Restaurant admin credentials
     if (
-      (cleanId === 'admin@residency.com' ||
+      (cleanId === 'admin@motuseth.com' ||
         cleanId === 'admin' ||
         cleanId === 'owner' ||
-        cleanId === 'owner@residency.com') &&
+        cleanId === 'motu' ||
+        cleanId === 'admin@residency.com') &&
       isMasterPassword
     ) {
       // Auto-provision user doc in Firestore
       const newUser = {
-        id: 'admin-residency',
-        email: 'admin@residency.com',
+        id: 'admin-motuseth',
+        email: 'admin@motuseth.com',
         username: 'admin',
         password_hash: hashed,
         role: 'owner',
-        business_id: 'residence-inn',
+        business_id: 'motu-seth',
         created_at: new Date().toISOString(),
       }
       await db.collection('users').doc(newUser.id).set(newUser)
@@ -161,9 +171,9 @@ export async function authenticateAdminUser(
   if (data.password_hash === hashed || (isMasterPassword && password === 'password123')) {
     return {
       id: userDoc.id,
-      email: data.email || 'admin@residency.com',
+      email: data.email || 'admin@motuseth.com',
       role: data.role || 'owner',
-      businessId: data.business_id || 'residence-inn',
+      businessId: data.business_id || 'motu-seth',
       username: data.username,
     }
   }

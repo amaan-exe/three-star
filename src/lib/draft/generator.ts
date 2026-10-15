@@ -13,122 +13,113 @@ export interface GenerationOptions {
 }
 
 /**
- * Rich, diverse sentence banks for hotel stays.
- * Thousands of permutations ensure no two guest reviews are identical.
+ * Rich, diverse sentence banks for Motu Seth Restaurant dining experiences.
+ * Thousands of permutations ensure no two customer reviews are identical.
  */
 const OVERALL_POSITIVE = [
-  'Had a truly wonderful and comfortable stay here.',
-  'Really enjoyed my stay at Residence Inn in Patna.',
-  'Had a pleasant, relaxing, and hassle-free stay.',
-  'Wonderful hotel experience with peaceful ambience and great comfort.',
-  'My experience staying here in Patna exceeded all expectations.',
-  'From check-in to check-out, our entire stay was completely seamless.',
-  'A very calm, comfortable, and well-managed hotel stay.',
-  'Spent a memorable night here; everything felt fresh and welcoming.',
-  'An outstanding hospitality experience in the heart of Patna.',
-  'Delighted with the comfort, peaceful vibe, and top-tier hospitality.',
-  'Such a refreshing and restful experience throughout our visit.',
-  'One of the smoothest and most comfortable stays I have had recently.',
-  'Really appreciated the calm atmosphere and comfortable environment here.',
-  'A delightful hotel stay with all modern conveniences taken care of.',
-  'Thoroughly enjoyed our visit; everything was neat, cozy, and relaxing.',
-  'A top-notch stay in Patna that felt genuinely relaxing and hospitable.',
-  'Had a restful night and thoroughly enjoyed the hospitality here.',
-  'Great choice for staying in Patna; peaceful surroundings and great comfort.',
-  'The hotel provided a warm, welcoming, and exceptionally comfortable stay.',
-  'A wonderful stay with first-rate hospitality and a very cozy environment.',
+  'Had a truly wonderful dining experience at Motu Seth Restaurant.',
+  'Really enjoyed our visit to Motu Seth Restaurant on Bailey Road in Patna.',
+  'Had a fantastic meal here today; the food was fresh and incredibly flavorful.',
+  'One of the finest restaurant experiences on Bailey Road in Patna.',
+  'Visited Motu Seth Restaurant today and every single dish exceeded our expectations.',
+  'From seating to billing, our entire dining experience was completely seamless.',
+  'A very pleasant, comfortable, and well-managed family dining spot.',
+  'Delighted with the rich flavors, cozy ambiance, and warm hospitality.',
+  'Such a satisfying and flavorful culinary experience throughout our visit.',
+  'One of the tastiest and most enjoyable meals I have had recently in Patna.',
+  'Really appreciated the welcoming dining atmosphere and courteous service.',
+  'A delightful restaurant with authentic flavors and generous portion sizes.',
+  'Thoroughly enjoyed our meal; everything was delicious, neat, and freshly made.',
+  'A top-notch dining spot in Patna that felt genuinely hospitable and satisfying.',
+  'Had a memorable lunch here and thoroughly enjoyed the culinary hospitality.',
+  'Great choice for lunch and dinner on Bailey Road; clean surroundings and great food.',
+  'The restaurant provided a warm, welcoming, and exceptionally tasty experience.',
+  'A wonderful dining visit with first-rate hospitality and authentic recipes.',
 ]
 
 const OVERALL_NEUTRAL = [
-  'Stayed here recently during my visit to Patna.',
-  'A decent and standard hotel stay overall.',
-  'Spent a night here; the overall experience was satisfactory.',
-  'Overall, a fairly normal and quiet hotel visit.',
-  'A standard stay in Patna with acceptable facilities.',
+  'Visited Motu Seth Restaurant today for a meal.',
+  'A decent and standard restaurant dining experience overall.',
+  'Had lunch here today; the overall experience was satisfactory.',
+  'Overall, a fairly normal and quiet dining visit on Bailey Road.',
+  'A standard meal in Patna with acceptable taste and service.',
 ]
 
 const OVERALL_NEGATIVE = [
-  'Stayed here recently, but the experience fell short of expectations.',
-  'Visited this hotel, though certain aspects of the stay could be improved.',
-  'Our stay here did not meet our initial expectations.',
-  'The stay was average and several details needed better management.',
+  'Dined here today, though the overall visit fell short of expectations.',
+  'Visited this restaurant, though certain aspects of the dining could be improved.',
+  'Our dining experience here did not fully meet our initial expectations.',
+  'The meal was average and several details needed better management.',
 ]
 
-const ROOM_POSITIVE = [
-  'The room was spotless, spacious, and very comfortable.',
-  'Loved the cozy bedding, fresh linens, and peaceful room atmosphere.',
-  'The room cleanliness and modern amenities were top notch.',
-  'The room was well-maintained with excellent AC and clean bathroom.',
-  'Our suite was sparkling clean with crisp sheets and excellent climate control.',
-  'Everything in the room was tidy, modern, and in excellent working order.',
-  'The bed was exceptionally comfortable and ensured a sound, undisturbed sleep.',
-  'Impressed by the hygiene standards, fresh towels, and quiet room acoustics.',
-  'The accommodations were bright, neat, and equipped with all necessities.',
-  'Sanitized rooms and quiet surroundings made relaxing so effortless.',
-  'The bathroom was squeaky clean and the bedroom was impeccably arranged.',
-  'Appreciated the fresh room fragrance, comfortable mattress, and silent AC.',
-  'The room offered generous space, good natural light, and clean amenities.',
-  'Very cozy and orderly room with excellent hot water and high cleanliness.',
-  'The suite felt completely fresh and provided a truly tranquil night.',
+const FOOD_POSITIVE = [
+  'The biryani and curries were bursting with authentic spices and rich aroma.',
+  'Loved the succulent kebabs, tender meat, and fresh buttery gravies.',
+  'The paneer starters and curries were fresh, smoky, and seasoned to perfection.',
+  'Every dish was served piping hot, flavorful, and made with top-quality ingredients.',
+  'The handi specials and butter chicken were cooked to absolute perfection.',
+  'The tandoori naans were crisp, soft, and paired wonderfully with the gravies.',
+  'Impressed by the rich Dum preparation and the balanced aroma of the spices.',
+  'The food had authentic Indian character and generous, satisfying portions.',
+  'Tasted amazing from the very first bite; the spices and marinades were spot on.',
+  'Freshly cooked dishes with authentic flavors that made our meal truly memorable.',
+  'Rich gravies, tender meat, and fragrant rice that tasted authentic and delightful.',
+  'The starters were crispy and juicy, and the main course curries were superb.',
 ]
 
-const ROOM_NEUTRAL = [
-  'The room comfort was standard and reasonably maintained.',
-  'The room and amenities were adequate for a short stay.',
-  'The room was fairly basic but served our purpose for the night.',
+const FOOD_NEUTRAL = [
+  'The food was acceptable and met standard restaurant expectations.',
+  'The dishes were decent and reasonably flavorful for a quick meal.',
+  'The food was fairly standard and served hot.',
 ]
 
-const ROOM_NEGATIVE = [
-  'The room cleanliness and maintenance could have been better.',
-  'The room amenities and bedding needed more attention.',
-  'The room felt slightly neglected and cleanliness should improve.',
+const FOOD_NEGATIVE = [
+  'The food seasoning and flavor could have been better.',
+  'The dishes fell short of our taste expectations today.',
+  'The food was average and lacked the punch of fresh spices.',
 ]
 
 const SERVICE_POSITIVE = [
-  'The front desk and housekeeping staff were warm, polite, and very helpful.',
-  'Hospitality was exceptional with prompt assistance and swift check-in.',
-  'The hotel team was courteous and attentive to all our requests.',
-  'Remarkable service from the staff throughout our entire stay.',
+  'The staff was remarkably polite, courteous, and attentive to our table.',
+  'Hospitality was warm with prompt order taking and swift table service.',
+  'The restaurant team was courteous and attentive to all our requests.',
+  'Remarkable service from the staff throughout our entire meal.',
   'Staff members were always smiling, respectful, and eager to assist us.',
-  'Check-in and luggage assistance were handled promptly and professionally.',
-  'Housekeeping was very swift and the reception team was incredibly welcoming.',
-  'Customer care here is genuine; the staff took great care of our comfort.',
-  'Warm hospitality with proactive assistance at every stage of our visit.',
-  'The front desk team was very polite, professional, and accommodating.',
-  'Courteous staff that responded immediately to every question and request.',
-  'From front desk to housekeeping, the entire team was attentive and pleasant.',
-  'Superb service with genuine warmth and prompt room assistance.',
-  'The hotel staff made sure we had everything we needed without any delay.',
+  'Orders were served hot without long waiting times.',
+  'The hospitality was genuinely warm and the team made us feel right at home.',
+  'Attentive service with polite recommendations from the restaurant team.',
+  'Quick turnaround time and prompt attention to our table needs.',
+  'From greeting to final billing, the staff was polite and accommodating.',
 ]
 
 const SERVICE_NEUTRAL = [
-  'The front desk and staff service were standard and adequate.',
-  'Check-in and room assistance were handled without major delay.',
-  'The staff service was normal and straightforward.',
+  'The staff and table service were standard and adequate.',
+  'Food service was handled without any major delay.',
+  'The service was normal and straightforward.',
 ]
 
 const SERVICE_NEGATIVE = [
-  'Staff responsiveness and room service were quite slow.',
-  'Front desk service could be more welcoming and attentive.',
-  'Staff seemed overwhelmed and assistance took longer than expected.',
+  'Staff attentiveness and table service were quite slow.',
+  'Service could be more welcoming and proactive.',
+  'Table assistance took longer than expected today.',
 ]
 
 const LOCATION_POSITIVE = [
-  'Its prime location in Patliputra makes traveling around Patna very easy.',
-  'Being located in a quiet area close to main hubs was a huge benefit.',
-  'Great connectivity to the city while remaining peaceful and quiet inside.',
-  'The location is convenient and accessible, making local transit very simple.',
+  'Its prime location at Ishwari Arcade on Bailey Road makes visiting very convenient.',
+  'Located right on Bailey Road near Raj Palace with easy access and good parking.',
+  'The 4th floor dining area offers a cozy, clean ambiance for family and friends.',
+  'A very convenient location on Bailey Road that makes family dining hassle-free.',
 ]
 
 const CLOSING_POSITIVE = [
-  'Would happily recommend this hotel to anyone visiting Patna.',
-  'Looking forward to staying here again on my next visit.',
-  'A solid, trustworthy hotel choice that I would glad recommend.',
-  'Will definitely choose this hotel again when traveling to the city.',
-  'Highly recommended for anyone looking for comfort and peace of mind.',
-  'A truly satisfying experience that makes me want to return soon.',
-  'Happily recommending this property to friends and fellow travelers.',
-  'Great value, excellent comfort, and dependable service all around.',
+  'Would happily recommend Motu Seth Restaurant to anyone visiting Bailey Road.',
+  'Looking forward to dining here again on my next visit to Patna.',
+  'A solid, trustworthy restaurant choice in Patna that I gladly recommend.',
+  'Definitely coming back for their special biryani and handi specialties.',
+  'Highly recommended for anyone looking for delicious food and great value.',
+  'A truly satisfying meal that makes me want to return soon.',
+  'Happily recommending this restaurant to friends and fellow foodies in Patna.',
+  'Great taste, rich flavors, and dependable hospitality all around.',
 ]
 
 function getSeededIndex(seed: string, length: number): number {
@@ -162,13 +153,13 @@ export function generateDeterministicDraft(
     overallStr = OVERALL_NEGATIVE[getSeededIndex(effectiveSeed + '-ov', OVERALL_NEGATIVE.length)]
   }
 
-  let roomStr = ''
+  let foodStr = ''
   if (foodTone === 'positive') {
-    roomStr = ROOM_POSITIVE[getSeededIndex(effectiveSeed + '-rm', ROOM_POSITIVE.length)]
+    foodStr = FOOD_POSITIVE[getSeededIndex(effectiveSeed + '-fd', FOOD_POSITIVE.length)]
   } else if (foodTone === 'neutral') {
-    roomStr = ROOM_NEUTRAL[getSeededIndex(effectiveSeed + '-rm', ROOM_NEUTRAL.length)]
+    foodStr = FOOD_NEUTRAL[getSeededIndex(effectiveSeed + '-fd', FOOD_NEUTRAL.length)]
   } else {
-    roomStr = ROOM_NEGATIVE[getSeededIndex(effectiveSeed + '-rm', ROOM_NEGATIVE.length)]
+    foodStr = FOOD_NEGATIVE[getSeededIndex(effectiveSeed + '-fd', FOOD_NEGATIVE.length)]
   }
 
   let serviceStr = ''
@@ -193,15 +184,15 @@ export function generateDeterministicDraft(
   // Highlights from factSheet if user selected them
   let highlightStr = ''
   if (factSheet.ordered.length > 0 && foodTone === 'positive') {
-    const amenities = factSheet.ordered.slice(0, 2).join(' and ')
-    highlightStr = `We especially enjoyed the ${amenities}.`
+    const dishes = factSheet.ordered.slice(0, 2).join(' and ')
+    highlightStr = `We especially loved the ${dishes}.`
   } else if (factSheet.liked.length > 0 && overallTone === 'positive') {
     const aspects = factSheet.liked.slice(0, 2).join(' and ')
-    highlightStr = `The ${aspects} made our stay even better.`
+    highlightStr = `The ${aspects} made our dining visit even more special.`
   }
 
   if (overallTone !== 'positive') {
-    return [overallStr, roomStr, serviceStr].filter(Boolean).join(' ')
+    return [overallStr, foodStr, serviceStr].filter(Boolean).join(' ')
   }
 
   // Multiple assembly structures to provide radical variation
@@ -210,25 +201,25 @@ export function generateDeterministicDraft(
   let sentences: string[]
   switch (templateIndex) {
     case 0:
-      // Pattern: Room first, then service, then overall/closing
-      sentences = [roomStr, serviceStr, closingStr]
+      // Pattern: Food first, then service, then closing
+      sentences = [foodStr, serviceStr, closingStr]
       break
     case 1:
-      // Pattern: Overall first, then room, then service
-      sentences = [overallStr, roomStr, serviceStr]
+      // Pattern: Overall first, then food, then service
+      sentences = [overallStr, foodStr, serviceStr]
       break
     case 2:
-      // Pattern: Service/hospitality first, then room comfort, then recommendation
-      sentences = [serviceStr, roomStr, closingStr]
+      // Pattern: Service/hospitality first, then food flavors, then recommendation
+      sentences = [serviceStr, foodStr, closingStr]
       break
     case 3:
-      // Pattern: Overall, then location/highlight, then service
+      // Pattern: Overall, then highlight/dish, then service
       sentences = [overallStr, highlightStr || locationStr, serviceStr]
       break
     case 4:
     default:
-      // Pattern: Room, location/highlight, and closing
-      sentences = [roomStr, highlightStr || locationStr, closingStr]
+      // Pattern: Food, dish highlight, and closing
+      sentences = [foodStr, highlightStr || locationStr, closingStr]
       break
   }
 
@@ -239,12 +230,12 @@ export function generateDeterministicDraft(
  * Angles to steer LLM generation into varied voices and perspectives.
  */
 const LLM_ANGLES = [
-  'Focus angle: Highlight the peaceful night, quiet atmosphere, and restful sleep.',
-  'Focus angle: Emphasize the spotless cleanliness of the room, fresh linens, and modern bathroom.',
-  'Focus angle: Highlight the warm, prompt greeting at the front desk and attentive housekeeping.',
-  'Focus angle: Mention the prime, convenient location in Patna (near Patliputra/P&M Mall) and hassle-free comfort.',
-  'Focus angle: Express genuine satisfaction with the overall hospitality, cozy suite, and smooth check-in.',
-  'Focus angle: A traveler who appreciated a calm, well-kept retreat with polite and accommodating staff.',
+  'Focus angle: Highlight the rich flavors, delicious spices, and authentic aroma of the food.',
+  'Focus angle: Emphasize the warm table hospitality, polite staff, and prompt service.',
+  'Focus angle: Mention the prime, convenient location at Ishwari Arcade on Bailey Road, Patna.',
+  'Focus angle: Express genuine satisfaction with the biryani, starters, handi specialties, and generous portions.',
+  'Focus angle: A family diner who appreciated the pleasant, clean ambiance and welcoming atmosphere.',
+  'Focus angle: A satisfied foodie praising the authentic Indian taste and great value for money.',
 ]
 
 /**
@@ -280,11 +271,11 @@ export async function generateReviewDraft(
   // Pick a dynamic angle for prompt variety
   const randomAngle = LLM_ANGLES[Math.floor(Math.random() * LLM_ANGLES.length)]
 
-  const prompt = `You are helping a hotel guest write a brief, authentic Google review draft for their stay at ${restaurantName} in Patna.
+  const prompt = `You are helping a restaurant diner write a brief, authentic Google review draft for their dining visit to ${restaurantName} on Bailey Road in Patna.
 STRICT GUIDELINES:
-1. Write in the first person ("I" or "We") as a genuine guest who stayed at this hotel.
+1. Write in the first person ("I" or "We") as a genuine diner who visited this restaurant.
 2. Length MUST be between 30 and 65 words (about 2 to 3 natural sentences).
-3. Mention hotel highlights like clean & comfortable rooms, peaceful stay, pleasant ambience, courteous front desk staff, or good amenities.
+3. Mention dining highlights like delicious food, rich flavors, authentic biryani, starters or handi curries, courteous staff, pleasant ambience at Ishwari Arcade, or great value.
 4. ${randomAngle}
 5. Write with unique phrasing and natural conversational flow. Avoid cliché templates or repetitive formulas.
 6. Do NOT include words: 'star', 'stars', 'rating', 'manager', 'waiter', 'discount', 'coupon', 'promo', 'freebie', URLs, hashtags, or emojis.

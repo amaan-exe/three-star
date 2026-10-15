@@ -81,18 +81,18 @@ export default function OfflinePage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
                 <Sparkles className="w-3.5 h-3.5" />
-                Residence Inn, Patna
+                Motu Seth Restaurant, Patna
               </div>
               <a
-                href="tel:6201699943"
+                href="tel:7631996611"
                 className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"
               >
                 <Phone className="w-3 h-3 text-amber-400" />
-                <span>Call: 6201699943</span>
+                <span>Call: 7631996611</span>
               </a>
             </div>
             <p className="text-[11px] text-slate-400 leading-tight">
-              behind P&amp;M Mall and Ion Digital Zone, near Vishwakarma Mandir, Patliputra Industrial Area, Patliputra Colony, Patna, Bihar 800013
+              4th Floor, Ishwar Arcade, Service Rd, Bailey Rd, near Raj Palace, S. K. Puram, Danapur, Patna, Bihar 801503, India
             </p>
           </div>
 

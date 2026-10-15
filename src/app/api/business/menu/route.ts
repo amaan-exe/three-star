@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const user = await getAdminSession()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const businessId = user.businessId || 'residence-inn'
+    const businessId = user.businessId || 'motu-seth'
     const body = await request.json().catch(() => ({}))
     const parsed = addDishSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: 'Invalid dish name' }, { status: 400 })

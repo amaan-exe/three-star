@@ -52,7 +52,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
 
     const factSheet = buildFactSheet(answersList, menuItemNames)
     const biz = await getBusiness(session.business_id)
-    const restaurantName = biz?.name || 'Residence Inn'
+    const restaurantName = biz?.name || 'Motu Seth Restaurant'
 
     // 4. Generate review draft (with dynamic entropy and anti-repetition previousText)
     const generated = await generateReviewDraft(factSheet, id, restaurantName, {

@@ -86,8 +86,15 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     const now = new Date().toISOString()
     const db = getFirestoreDb()
 
-    const customerName = (providedAnswers.customer_name || answerMap.get('customer_name') || answerMap.get('customer_contact')?.name || '') as string
-    const customerPhone = (providedAnswers.customer_phone || answerMap.get('customer_phone') || answerMap.get('customer_contact')?.phone || '') as string
+    const customerName = (body?.customer_name || providedAnswers.customer_name || answerMap.get('customer_name') || answerMap.get('customer_contact')?.name || '') as string
+    const customerPhone = (body?.customer_phone || providedAnswers.customer_phone || answerMap.get('customer_phone') || answerMap.get('customer_contact')?.phone || '') as string
+
+    if (customerName) {
+      await saveAnswer(id, 'customer_name', customerName, session.business_id)
+    }
+    if (customerPhone) {
+      await saveAnswer(id, 'customer_phone', customerPhone, session.business_id)
+    }
 
     // 6. Mark session as completed in Firestore
     await db.collection('sessions').doc(id).set(

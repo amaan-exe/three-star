@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const businessId = user.businessId || 'residence-inn'
+    const businessId = user.businessId || 'motu-seth'
     const body = await request.json().catch(() => ({}))
     const parsed = campaignCreateSchema.safeParse(body)
 
